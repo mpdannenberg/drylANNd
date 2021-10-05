@@ -33,6 +33,7 @@ for j = 1:n
     Ameriflux(j).Reco = flx.Reco_f; Ameriflux(j).Reco(flx.NEE_fqc > filtThresh) = NaN;
     Ameriflux(j).GPP = flx.GPP_f; Ameriflux(j).GPP(flx.GPP_fqc > filtThresh) = NaN;
     Ameriflux(j).GPP_fqc = flx.GPP_fqc; 
+    Ameriflux(j).iWUE = flx.iWUE; Ameriflux(j).iWUE(flx.GPP_fqc > filtThresh | flx.LE_fqc > filtThresh) = NaN;
     
     % Energy flux variables
     Ameriflux(j).LE = flx.LE_f; Ameriflux(j).LE(flx.LE_fqc > filtThresh) = NaN;
@@ -49,7 +50,7 @@ for j = 1:n
     Ameriflux(j).VPD = flx.VPD_f; Ameriflux(j).VPD(flx.VPD_fqc > filtThresh) = NaN;
     Ameriflux(j).VPD_fqc = flx.VPD_fqc; 
     Ameriflux(j).VPDmax = flx.VPDmax_f; Ameriflux(j).VPDmax(flx.VPD_fqc > filtThresh) = NaN;
-    Ameriflux(j).P = flx.P;
+    %Ameriflux(j).P = flx.P;
     
 end
 
