@@ -65,6 +65,6 @@ for i = 1:length(fns)
     end
 end
 
-cd('D:\Publications\Dannenberg_et_al_DrylANNd');
+cd('D:\Publications\NASA_SMAP_DrylANNd');
 save('./data/Ameriflux_daily.mat','Ameriflux');
 
