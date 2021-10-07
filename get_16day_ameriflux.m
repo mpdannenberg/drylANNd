@@ -29,13 +29,13 @@ for i = 1:n
     Ameriflux_16day(i).Reco = NaN(nt, 1);
     Ameriflux_16day(i).GPP = NaN(nt, 1);
     Ameriflux_16day(i).LE = NaN(nt, 1);
+    Ameriflux_16day(i).iWUE = NaN(nt, 1);
     Ameriflux_16day(i).H = NaN(nt, 1);
     Ameriflux_16day(i).Rg = NaN(nt, 1);
     Ameriflux_16day(i).Tair = NaN(nt, 1);
     Ameriflux_16day(i).Tmin = NaN(nt, 1);
     Ameriflux_16day(i).VPD = NaN(nt, 1);
     Ameriflux_16day(i).VPDmax = NaN(nt, 1);
-    Ameriflux_16day(i).P = NaN(nt, 1);
     Ameriflux_16day(i).NDVI = NaN(nt, 1);
     Ameriflux_16day(i).EVI = NaN(nt, 1);
     Ameriflux_16day(i).NIRv = NaN(nt, 1);
@@ -83,6 +83,15 @@ for i = 1:n
             mu = sum(temp(nm) .* w(nm)) ./ sum(w(nm));
             if sum(~isnan(temp)) >= sampthresh
                 Ameriflux_16day(i).GPP(yr==yrs(y) & dy==doys(d)) = mu;
+            end
+            
+            % iWUE
+            temp = Ameriflux(i).iWUE(idx); 
+            w = (1 - Ameriflux(i).GPP_fqc(idx)/3) .^ 2;
+            nm = ~isnan(temp);
+            mu = sum(temp(nm) .* w(nm)) ./ sum(w(nm));
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_16day(i).iWUE(yr==yrs(y) & dy==doys(d)) = mu;
             end
             
             % LE
@@ -146,12 +155,6 @@ for i = 1:n
             mu = sum(temp(nm) .* w(nm)) ./ sum(w(nm));
             if sum(~isnan(temp)) >= sampthresh
                 Ameriflux_16day(i).VPDmax(yr==yrs(y) & dy==doys(d)) = mu;
-            end
-            
-            % P
-            temp = Ameriflux(i).P(idx); 
-            if sum(~isnan(temp)) >= sampthresh
-                Ameriflux_16day(i).P(yr==yrs(y) & dy==doys(d)) = sum(temp);
             end
             
             % NDVI

@@ -30,13 +30,13 @@ for i = 1:n
     Ameriflux_8day(i).Reco = NaN(nt, 1);
     Ameriflux_8day(i).GPP = NaN(nt, 1);
     Ameriflux_8day(i).LE = NaN(nt, 1);
+    Ameriflux_8day(i).iWUE = NaN(nt, 1);
     Ameriflux_8day(i).H = NaN(nt, 1);
     Ameriflux_8day(i).Rg = NaN(nt, 1);
     Ameriflux_8day(i).Tair = NaN(nt, 1);
     Ameriflux_8day(i).Tmin = NaN(nt, 1);
     Ameriflux_8day(i).VPD = NaN(nt, 1);
     Ameriflux_8day(i).VPDmax = NaN(nt, 1);
-    Ameriflux_8day(i).P = NaN(nt, 1);
     Ameriflux_8day(i).NDVI = NaN(nt, 1);
     Ameriflux_8day(i).EVI = NaN(nt, 1);
     Ameriflux_8day(i).NIRv = NaN(nt, 1);
@@ -84,6 +84,15 @@ for i = 1:n
             mu = sum(temp(nm) .* w(nm)) ./ sum(w(nm));
             if sum(~isnan(temp)) >= sampthresh
                 Ameriflux_8day(i).GPP(yr==yrs(y) & dy==doys(d)) = mu;
+            end
+            
+            % iWUE
+            temp = Ameriflux(i).iWUE(idx); 
+            w = (1 - Ameriflux(i).GPP_fqc(idx)/3) .^ 2;
+            nm = ~isnan(temp);
+            mu = sum(temp(nm) .* w(nm)) ./ sum(w(nm));
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_8day(i).iWUE(yr==yrs(y) & dy==doys(d)) = mu;
             end
             
             % LE
@@ -147,12 +156,6 @@ for i = 1:n
             mu = sum(temp(nm) .* w(nm)) ./ sum(w(nm));
             if sum(~isnan(temp)) >= sampthresh
                 Ameriflux_8day(i).VPDmax(yr==yrs(y) & dy==doys(d)) = mu;
-            end
-            
-            % P
-            temp = Ameriflux(i).P(idx); 
-            if sum(~isnan(temp)) >= sampthresh
-                Ameriflux_8day(i).P(yr==yrs(y) & dy==doys(d)) = sum(temp);
             end
             
             % NDVI

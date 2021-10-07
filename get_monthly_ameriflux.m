@@ -30,13 +30,13 @@ for i = 1:n
     Ameriflux_monthly(i).Reco = NaN(nt, 1);
     Ameriflux_monthly(i).GPP = NaN(nt, 1);
     Ameriflux_monthly(i).LE = NaN(nt, 1);
+    Ameriflux_monthly(i).iWUE = NaN(nt, 1);
     Ameriflux_monthly(i).H = NaN(nt, 1);
     Ameriflux_monthly(i).Rg = NaN(nt, 1);
     Ameriflux_monthly(i).Tair = NaN(nt, 1);
     Ameriflux_monthly(i).Tmin = NaN(nt, 1);
     Ameriflux_monthly(i).VPD = NaN(nt, 1);
     Ameriflux_monthly(i).VPDmax = NaN(nt, 1);
-    Ameriflux_monthly(i).P = NaN(nt, 1);
     Ameriflux_monthly(i).NDVI = NaN(nt, 1);
     Ameriflux_monthly(i).EVI = NaN(nt, 1);
     Ameriflux_monthly(i).NIRv = NaN(nt, 1);
@@ -84,6 +84,15 @@ for i = 1:n
             mu = sum(temp(nm) .* w(nm)) ./ sum(w(nm));
             if sum(~isnan(temp)) >= sampthresh
                 Ameriflux_monthly(i).GPP(yr==yrs(y) & mo==mos(d)) = mu;
+            end
+            
+            % iWUE
+            temp = Ameriflux(i).iWUE(idx); 
+            w = (1 - Ameriflux(i).GPP_fqc(idx)/3) .^ 2;
+            nm = ~isnan(temp);
+            mu = sum(temp(nm) .* w(nm)) ./ sum(w(nm));
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_monthly(i).iWUE(yr==yrs(y) & mo==mos(d)) = mu;
             end
             
             % LE
@@ -147,12 +156,6 @@ for i = 1:n
             mu = sum(temp(nm) .* w(nm)) ./ sum(w(nm));
             if sum(~isnan(temp)) >= sampthresh
                 Ameriflux_monthly(i).VPDmax(yr==yrs(y) & mo==mos(d)) = mu;
-            end
-            
-            % P
-            temp = Ameriflux(i).P(idx); 
-            if sum(~isnan(temp)) >= sampthresh
-                Ameriflux_monthly(i).P(yr==yrs(y) & mo==mos(d)) = sum(temp);
             end
             
             % NDVI
