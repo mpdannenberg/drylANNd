@@ -32,17 +32,26 @@ for j = [1:25 27:n]
     Xc = [extractfield(C, 'NDVI')' extractfield(C, 'EVI')' extractfield(C, 'NIRv')' ...
         extractfield(C, 'kNDVI')' ...
         extractfield(C, 'LSWI3')' extractfield(C, 'MOD11_Day')' extractfield(C, 'MOD11_Night')' ...
-        extractfield(C, 'MYD11_Day')' extractfield(C, 'MYD11_Night')' extractfield(C, 'L4SM_Root')' ...
+        extractfield(C, 'MYD11_Day')' extractfield(C, 'MYD11_Night')' ...
+        extractfield(C, 'MOD11_Tdif')' extractfield(C, 'MYD11_Tdif')' extractfield(C, 'L4SM_Root')' ...
         extractfield(C, 'L4SM_Surf')' extractfield(C, 'L4SM_Tsoil')' extractfield(C, 'L3SM_VegOpacity')']'; % Add more as needed
     Xv = [extractfield(V, 'NDVI')' extractfield(V, 'EVI')' extractfield(V, 'NIRv')' ...
         extractfield(V, 'kNDVI')' ...
         extractfield(V, 'LSWI3')' extractfield(V, 'MOD11_Day')' extractfield(V, 'MOD11_Night')' ...
-        extractfield(V, 'MYD11_Day')' extractfield(V, 'MYD11_Night')' extractfield(V, 'L4SM_Root')' ...
+        extractfield(V, 'MYD11_Day')' extractfield(V, 'MYD11_Night')' ...
+        extractfield(V, 'MOD11_Tdif')' extractfield(V, 'MYD11_Tdif')' extractfield(V, 'L4SM_Root')' ...
         extractfield(V, 'L4SM_Surf')' extractfield(V, 'L4SM_Tsoil')' extractfield(V, 'L3SM_VegOpacity')']'; % Add more as needed
-    Yc = [extractfield(C, 'GPP')' extractfield(C, 'NEE')' extractfield(C, 'ET')']'; 
-    Ymu = nanmean(Yc, 2);
-    Yv = NaN(3, size(Xv,2), nsims);
-
+    Yc = [extractfield(C, 'GPP')' extractfield(C, 'NEE')' extractfield(C, 'ET')' extractfield(C, 'iWUE')']'; 
+    Yv = NaN(size(Yc,1), size(Xv,2), nsims);
+    
+    % put all y variables on common scale (so that variance doesn't overfit
+    % to WUE, which is ~1 order of magnitude greater than other variables
+    Ycm = repmat(mean(Yc, 2, 'omitnan'), 1, size(Yc, 2));
+    Ycs = repmat(std(Yc, 0, 2, 'omitnan'), 1, size(Yc, 2));
+    Yvm = repmat(mean(Yc, 2, 'omitnan'), 1, size(Yv, 2));
+    Yvs = repmat(std(Yc, 0, 2, 'omitnan'), 1, size(Yv, 2));
+    Yc = (Yc-Ycm) ./ Ycs;
+    
     nets = cell(1,nsims);
     trs = cell(1,nsims);
 
@@ -51,7 +60,7 @@ for j = [1:25 27:n]
         net.trainParam.showWindow = false;
         [net, tr] = train(net, Xc, Yc);
 
-        Yv(:,:,i) = net(Xv);
+        Yv(:,:,i) = net(Xv) .* Yvs + Yvm;
 
         nets{i} = net;
         trs{i} = tr;
@@ -60,9 +69,11 @@ for j = [1:25 27:n]
 
     % Ensemble mean
     Yv_mean = squeeze(nanmean(Yv(:,:,:), 3));
+    Yc = Yc .* Ycs + Ycm; % Transform back to original units
     Ameriflux_16day(j).GPP_DrylANNd = Yv_mean(1,:)';
     Ameriflux_16day(j).NEE_DrylANNd = Yv_mean(2,:)';
     Ameriflux_16day(j).ET_DrylANNd = Yv_mean(3,:)';
+    Ameriflux_16day(j).iWUE_DrylANNd = Yv_mean(4,:)';
     
     % Plot time series
     yr = V.Year;
