@@ -24,13 +24,24 @@ end
 for j = 1:k
     
     C = Ameriflux_8day(strcmp(lc, lcs{j}));
+
+    % Get calibration data
     Xc = [extractfield(C, 'NDVI')' extractfield(C, 'EVI')' extractfield(C, 'NIRv')' ...
         extractfield(C, 'kNDVI')' ...
         extractfield(C, 'LSWI3')' extractfield(C, 'MOD11_Day')' extractfield(C, 'MOD11_Night')' ...
-        extractfield(C, 'MYD11_Day')' extractfield(C, 'MYD11_Night')' extractfield(C, 'L4SM_Root')' ...
+        extractfield(C, 'MYD11_Day')' extractfield(C, 'MYD11_Night')' ...
+        extractfield(C, 'MOD11_Tdif')' extractfield(C, 'MYD11_Tdif')' extractfield(C, 'L4SM_Root')' ...
         extractfield(C, 'L4SM_Surf')' extractfield(C, 'L4SM_Tsoil')' extractfield(C, 'L3SM_VegOpacity')']'; % Add more as needed
-    Yc = [extractfield(C, 'GPP')' extractfield(C, 'NEE')' extractfield(C, 'ET')']'; 
-    Yv = NaN(3, size(Xc,2), nsims);
+    Yc = [extractfield(C, 'GPP')' extractfield(C, 'NEE')' extractfield(C, 'ET')' extractfield(C, 'iWUE')']'; 
+
+    % put all y variables on common scale (so that variance doesn't overfit
+    % to WUE, which is ~1 order of magnitude greater than other variables
+    Ycm = repmat(mean(Yc, 2, 'omitnan'), 1, size(Yc, 2));
+    Ycs = repmat(std(Yc, 0, 2, 'omitnan'), 1, size(Yc, 2));
+    Yc = (Yc-Ycm) ./ Ycs;
+
+    % Initialize validation matrix
+    Yv = NaN(size(Yc,1), size(Xc,2), nsims);
 
     nets = cell(1,nsims);
     trs = cell(1,nsims);
@@ -40,13 +51,14 @@ for j = 1:k
         net.trainParam.showWindow = false;
         [net, tr] = train(net, Xc, Yc);
 
-        Yv(:,:,i) = net(Xc);
+        Yv(:,:,i) = net(Xc) .* Ycs + Ycm;
 
         nets{i} = net;
         trs{i} = tr;
         clear net tr;
     end
     Yv_mean = squeeze(nanmean(Yv(:,:,:), 3));
+    Yc = Yc .* Ycs + Ycm;
     
     DrylANNd(j).IGBP = lcs{j};
     DrylANNd(j).NNets = nets;
@@ -57,8 +69,8 @@ for j = 1:k
     DrylANNd(j).Ypredicted = Yv;
     DrylANNd(j).Xnames = {'NDVI','EVI','NIRv','kNDVI',...
         'LSWI','MOD11_Day','MOD11_Night','MYD11_Day','MYD11_Night',...
-        'L4SM_Root','L4SM_Surf','L4SM_TSoil','L3SM_VegOpacity'};
-    DrylANNd(j).Ynames = {'GPP','NEE','ET'};
+        'MOD11_Tdif','MYD11_Tdif','L4SM_Root','L4SM_Surf','L4SM_TSoil','L3SM_VegOpacity'};
+    DrylANNd(j).Ynames = {'GPP','NEE','ET','iWUE'};
     
 end
 
