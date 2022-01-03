@@ -257,6 +257,9 @@ for i = 1:n
         end
     end
     
+    Ameriflux_16day(i).MOD11_Tdif = Ameriflux_16day(i).MOD11_Day - Ameriflux_16day(i).MOD11_Night;
+    Ameriflux_16day(i).MYD11_Tdif = Ameriflux_16day(i).MYD11_Day - Ameriflux_16day(i).MYD11_Night;
+
 end
 
 save('./data/Ameriflux_16day.mat', 'Ameriflux_16day');
