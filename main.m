@@ -7,10 +7,12 @@ read_ameriflux_data;
 read_modis_nbar;
 
 % Read in MODIS LST
-read_modis_lst;
+read_modis_lst; % Site-level
+read_gridded_lst; % Full western U.S.
 
 % Read in SMAP L4 soil moisture/temperature
-read_smap_l4sm;
+read_smap_l4sm; % Site-level
+read_gridded_sm; % Full western U.S.
 
 % Read in SMAP L3 VOD/vegetation water content
 read_smap_l3vod;
@@ -22,6 +24,9 @@ read_smap_l3vod;
 get_8day_ameriflux;
 get_16day_ameriflux;
 get_monthly_ameriflux;
+get_8day_gridded_smap;
+get_16day_gridded_smap;
+get_monthly_gridded_smap;
 
 % Fit DrylANNd model for each temporal interval
 fit_drylannd_8day;
