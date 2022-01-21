@@ -1,18 +1,14 @@
-% Map of global arid lands
+% Map of US dryland flux sites
 latlim = [31 49];
 lonlim = [-125 -96];
 
-pre = 'D:\Data_Analysis\PRISM\';
-f1 = matfile([pre,'PRISM_PPT.mat']);
-yr = f1.year;
-lat = f1.lat;
-lon = f1.lon;
-latidx = find(lat >= min(latlim) & lat <= max(latlim));
-lonidx = find(lon >= min(lonlim) & lon <= max(lonlim));
-
-P = f1.PPT(latidx, lonidx, find(yr>=1981 & yr<=2010), :);
-Pmean = mean(sum(P, 4), 3);
-clear pre f1 P yr;
+%% Load aridity index
+load ./data/TerraClimate_AridityIndex.mat;
+aridity = NaN(size(ai));
+aridity(ai < 0.03) = 1;
+aridity(ai >= 0.03 & ai<0.2) = 2;
+aridity(ai >= 0.2 & ai<0.5) = 3;
+aridity(ai >= 0.5 & ai<=0.75) = 4;
 
 %% Load Ameriflux data
 load ./data/Ameriflux_daily;
@@ -48,9 +44,9 @@ axesm('winkel','MapLatLimit',latlim,'MapLonLimit',lonlim,'grid',...
         'FLineWidth',1, 'FontColor',[0.5 0.5 0.5], 'MLabelParallel',min(latlim)+0.11);
 axis off;
 axis image;
-surfm(lat(latidx), lon(lonidx), Pmean)
-caxis([0 1600])
-colormap(gca, flipud(dclr));
+surfm(lat, lon, aridity)
+caxis([0.5 4.5])
+colormap(gca, dclr2(1:2:7,:));
 geoshow(states,'FaceColor','none','EdgeColor',[0.3 0.3 0.3])
 scatterm(flat,flon,20,[0.2 0.2 0.2], 'filled',...
     'MarkerFaceColor','w', 'MarkerEdgeColor','k');
@@ -59,10 +55,9 @@ ax.Position(2) = 0.18;
 
 cb = colorbar('southoutside');
 cb.Position = [0.1 0.15 0.8 0.04];
-cb.Ticks = 0:100:1600;
-cb.TickLength = 0.046;
-cb.TickLabels = {'0','','','','400','','','','800','','','','1200','','','','1600'};
-xlabel(cb, 'Mean annual precipitation (mm)')
+cb.Ticks = 1:4;
+cb.TickLength = 0;
+cb.TickLabels = {'hyperarid','arid','semiarid','subhumid'};
 
 %% Pie chart of LC types
 
