@@ -52,7 +52,13 @@ for i = 1:n
     Ameriflux_16day(i).L4SM_Tsoil = NaN(nt, 1);
     Ameriflux_16day(i).L3SM_VegOpacity = NaN(nt, 1);
     Ameriflux_16day(i).L3SM_VegWater = NaN(nt, 1);
-    
+    Ameriflux_16day(i).MCD12_BSV = NaN(nt, 1);
+    Ameriflux_16day(i).MCD12_CRP = NaN(nt, 1);
+    Ameriflux_16day(i).MCD12_FOR = NaN(nt, 1);
+    Ameriflux_16day(i).MCD12_GRS = NaN(nt, 1);
+    Ameriflux_16day(i).MCD12_SAV = NaN(nt, 1);
+    Ameriflux_16day(i).MCD12_SHB = NaN(nt, 1);
+
     for y = 1:length(yrs)
         for d = 1:length(doys)
             
@@ -160,25 +166,25 @@ for i = 1:n
             % NDVI
             temp = Ameriflux(i).NDVI(idx); 
             if sum(~isnan(temp)) >= sampthresh
-                Ameriflux_16day(i).NDVI(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+                Ameriflux_16day(i).NDVI(yr==yrs(y) & dy==doys(d)) = max(temp, [], 'omitnan');
             end
             
             % EVI
-            temp = Ameriflux(i).EVI(idx); 
+            temp = Ameriflux(i).EVI(idx); temp(temp > 1 | temp < -0.2) = NaN;
             if sum(~isnan(temp)) >= sampthresh
-                Ameriflux_16day(i).EVI(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+                Ameriflux_16day(i).EVI(yr==yrs(y) & dy==doys(d)) = max(temp, [], 'omitnan');
             end
             
             % NIRv
             temp = Ameriflux(i).NIRv(idx); 
             if sum(~isnan(temp)) >= sampthresh
-                Ameriflux_16day(i).NIRv(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+                Ameriflux_16day(i).NIRv(yr==yrs(y) & dy==doys(d)) = max(temp, [], 'omitnan');
             end
             
             % kNDVI
             temp = Ameriflux(i).kNDVI(idx); 
             if sum(~isnan(temp)) >= sampthresh
-                Ameriflux_16day(i).kNDVI(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+                Ameriflux_16day(i).kNDVI(yr==yrs(y) & dy==doys(d)) = max(temp, [], 'omitnan');
             end
             
             % LSWI1
@@ -253,13 +259,45 @@ for i = 1:n
                 Ameriflux_16day(i).L3SM_VegWater(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
             end
             
+            % MCD12_BSV
+            temp = Ameriflux(i).MCD12_BSV(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_16day(i).MCD12_BSV(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+            end
+            
+            % MCD12_CRP
+            temp = Ameriflux(i).MCD12_CRP(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_16day(i).MCD12_CRP(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+            end
+            
+            % MCD12_FOR
+            temp = Ameriflux(i).MCD12_FOR(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_16day(i).MCD12_FOR(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+            end
+            
+            % MCD12_GRS
+            temp = Ameriflux(i).MCD12_GRS(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_16day(i).MCD12_GRS(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+            end
+            
+            % MCD12_SAV
+            temp = Ameriflux(i).MCD12_SAV(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_16day(i).MCD12_SAV(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+            end
+            
+            % MCD12_SHB
+            temp = Ameriflux(i).MCD12_SHB(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_16day(i).MCD12_SHB(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+            end
             
         end
     end
     
-    Ameriflux_16day(i).MOD11_Tdif = Ameriflux_16day(i).MOD11_Day - Ameriflux_16day(i).MOD11_Night;
-    Ameriflux_16day(i).MYD11_Tdif = Ameriflux_16day(i).MYD11_Day - Ameriflux_16day(i).MYD11_Night;
-
 end
 
 save('./data/Ameriflux_16day.mat', 'Ameriflux_16day');
