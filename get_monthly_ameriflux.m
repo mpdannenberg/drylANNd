@@ -263,37 +263,37 @@ for i = 1:n
             % MCD12_BSV
             temp = Ameriflux(i).MCD12_BSV(idx); 
             if sum(~isnan(temp)) >= sampthresh
-                Ameriflux_monthly(i).MCD12_BSV(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+                Ameriflux_monthly(i).MCD12_BSV(yr==yrs(y) & mo==mos(d)) = nanmean(temp);
             end
             
             % MCD12_CRP
             temp = Ameriflux(i).MCD12_CRP(idx); 
             if sum(~isnan(temp)) >= sampthresh
-                Ameriflux_monthly(i).MCD12_CRP(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+                Ameriflux_monthly(i).MCD12_CRP(yr==yrs(y) & mo==mos(d)) = nanmean(temp);
             end
             
             % MCD12_FOR
             temp = Ameriflux(i).MCD12_FOR(idx); 
             if sum(~isnan(temp)) >= sampthresh
-                Ameriflux_monthly(i).MCD12_FOR(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+                Ameriflux_monthly(i).MCD12_FOR(yr==yrs(y) & mo==mos(d)) = nanmean(temp);
             end
             
             % MCD12_GRS
             temp = Ameriflux(i).MCD12_GRS(idx); 
             if sum(~isnan(temp)) >= sampthresh
-                Ameriflux_monthly(i).MCD12_GRS(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+                Ameriflux_monthly(i).MCD12_GRS(yr==yrs(y) & mo==mos(d)) = nanmean(temp);
             end
             
             % MCD12_SAV
             temp = Ameriflux(i).MCD12_SAV(idx); 
             if sum(~isnan(temp)) >= sampthresh
-                Ameriflux_monthly(i).MCD12_SAV(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+                Ameriflux_monthly(i).MCD12_SAV(yr==yrs(y) & mo==mos(d)) = nanmean(temp);
             end
             
             % MCD12_SHB
             temp = Ameriflux(i).MCD12_SHB(idx); 
             if sum(~isnan(temp)) >= sampthresh
-                Ameriflux_monthly(i).MCD12_SHB(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+                Ameriflux_monthly(i).MCD12_SHB(yr==yrs(y) & mo==mos(d)) = nanmean(temp);
             end
             
         end
