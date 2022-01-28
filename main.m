@@ -55,6 +55,11 @@ validate_drylannd_8day;
 validate_drylannd_16day;
 validate_drylannd_monthly;
 
+% Predict GPP, NEE, and ET with calibrated DrylANNd model
+predict_drylannd_8day;
+predict_drylannd_16day;
+predict_drylannd_monthly;
+
 % Test variable importance
 calculate_variable_importance_8day;
 calculate_variable_importance_16day;
