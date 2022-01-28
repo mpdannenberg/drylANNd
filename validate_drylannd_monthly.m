@@ -7,41 +7,31 @@ rng(3);
 load ./data/Ameriflux_monthly;
 n = length(Ameriflux_monthly);
 
-% Single savanna and shrub classes
-lc = {Ameriflux_monthly.IGBP}; 
-[Ameriflux_monthly(strcmp(lc, 'WSA')).IGBP] = deal('SAV');
-[Ameriflux_monthly(strcmp(lc, 'OSH')|strcmp(lc, 'CSH')).IGBP] = deal('SHB');
-[Ameriflux_monthly(strcmp({Ameriflux_monthly.Site}, 'US-Mpj')).IGBP] = deal('SAV');
-lc = {Ameriflux_monthly.IGBP}; 
-
 % Convert monthly mean latent heat flux to monthly mean daily ET
 for i = 1:n
     Ameriflux_monthly(i).ET = Ameriflux_monthly(i).LE * (1/1000000) * 60 * 60 * 24 * 0.408; % W m-2 --> MJ m-2 day-2 --> mm day-1
 end
 
-%% Leave one site out at a time
-% j = 21; % put into for loop eventually
+% Leave one site out at a time
 for j = [1:25 27:n]
     % #26 (US-Snf) didn't work... no LST data
     
     % what to do with missing data... fill with linear interpolation or
     % something? Maybe not... just loosen restrictions on how many
     % observations are needed for the monthly aggregation
-    C = Ameriflux_monthly(setdiff(1:n, j)); C = C(strcmp({C.IGBP}, lc{j}));
+    C = Ameriflux_monthly(setdiff(1:n, j)); 
     V = Ameriflux_monthly(j);
     Xc = [extractfield(C, 'NDVI')' extractfield(C, 'EVI')' extractfield(C, 'NIRv')' ...
-        extractfield(C, 'kNDVI')' ...
-        extractfield(C, 'LSWI3')' extractfield(C, 'MOD11_Day')' extractfield(C, 'MOD11_Night')' ...
-        extractfield(C, 'MYD11_Day')' extractfield(C, 'MYD11_Night')' ...
-        extractfield(C, 'MOD11_Tdif')' extractfield(C, 'MYD11_Tdif')' extractfield(C, 'L4SM_Root')' ...
-        extractfield(C, 'L4SM_Surf')' extractfield(C, 'L4SM_Tsoil')' extractfield(C, 'L3SM_VegOpacity')']'; % Add more as needed
+        extractfield(C, 'kNDVI')' extractfield(C, 'LSWI1')' extractfield(C, 'LSWI2')' extractfield(C, 'LSWI3')' ...
+        extractfield(C, 'MOD11_Day')' extractfield(C, 'MOD11_Night')' extractfield(C, 'MYD11_Day')' extractfield(C, 'MYD11_Night')' ...
+        extractfield(C, 'L4SM_Root')' extractfield(C, 'L4SM_Surf')' extractfield(C, 'L4SM_Tsoil')' ...
+        extractfield(C, 'MCD12_FOR')' extractfield(C, 'MCD12_GRS')' extractfield(C, 'MCD12_SAV')' extractfield(C, 'MCD12_SHB')']'; % Add more as needed
     Xv = [extractfield(V, 'NDVI')' extractfield(V, 'EVI')' extractfield(V, 'NIRv')' ...
-        extractfield(V, 'kNDVI')' ...
-        extractfield(V, 'LSWI3')' extractfield(V, 'MOD11_Day')' extractfield(V, 'MOD11_Night')' ...
-        extractfield(V, 'MYD11_Day')' extractfield(V, 'MYD11_Night')' ...
-        extractfield(V, 'MOD11_Tdif')' extractfield(V, 'MYD11_Tdif')' extractfield(V, 'L4SM_Root')' ...
-        extractfield(V, 'L4SM_Surf')' extractfield(V, 'L4SM_Tsoil')' extractfield(V, 'L3SM_VegOpacity')']'; % Add more as needed
-    Yc = [extractfield(C, 'GPP')' extractfield(C, 'NEE')' extractfield(C, 'ET')' extractfield(C, 'iWUE')']'; 
+        extractfield(V, 'kNDVI')' extractfield(V, 'LSWI1')' extractfield(V, 'LSWI2')' extractfield(V, 'LSWI3')' ...
+        extractfield(V, 'MOD11_Day')' extractfield(V, 'MOD11_Night')' extractfield(V, 'MYD11_Day')' extractfield(V, 'MYD11_Night')' ...
+        extractfield(V, 'L4SM_Root')' extractfield(V, 'L4SM_Surf')' extractfield(V, 'L4SM_Tsoil')' ...
+        extractfield(V, 'MCD12_FOR')' extractfield(V, 'MCD12_GRS')' extractfield(V, 'MCD12_SAV')' extractfield(V, 'MCD12_SHB')']'; % Add more as needed
+    Yc = [extractfield(C, 'GPP')' extractfield(C, 'NEE')' extractfield(C, 'ET')']'; 
     Yv = NaN(size(Yc,1), size(Xv,2), nsims);
     
     % put all y variables on common scale (so that variance doesn't overfit
@@ -73,7 +63,6 @@ for j = [1:25 27:n]
     Ameriflux_monthly(j).GPP_DrylANNd = Yv_mean(1,:)';
     Ameriflux_monthly(j).NEE_DrylANNd = Yv_mean(2,:)';
     Ameriflux_monthly(j).ET_DrylANNd = Yv_mean(3,:)';
-    Ameriflux_monthly(j).iWUE_DrylANNd = Yv_mean(4,:)';
     
     % Plot time series
     yr = V.Year;
@@ -192,3 +181,4 @@ for j = [1:25 27:n]
 
 end
 
+save('output/validation/monthly/DrylANNd_Ameriflux_validation.mat', 'Ameriflux_monthly', '-v7.3');
