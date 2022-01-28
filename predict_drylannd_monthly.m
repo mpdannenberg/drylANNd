@@ -87,5 +87,5 @@ end
 
 save('./output/DrylANNd_monthly_prediction.mat', 'GPP','ET','NEE',...
     'GPP_high','ET_high','NEE_high','GPP_low','ET_low','NEE_low',...
-    'lat','lon','yr','doy', '-v7.3');
+    'lat','lon','yr','mo', '-v7.3');
 
