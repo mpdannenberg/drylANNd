@@ -36,10 +36,14 @@ for j = [1:25 27:n]
     
     % put all y variables on common scale (so that variance doesn't overfit
     % to WUE, which is ~1 order of magnitude greater than other variables
-    Ycm = repmat(mean(Yc, 2, 'omitnan'), 1, size(Yc, 2));
-    Ycs = repmat(std(Yc, 0, 2, 'omitnan'), 1, size(Yc, 2));
-    Yvm = repmat(mean(Yc, 2, 'omitnan'), 1, size(Yv, 2));
-    Yvs = repmat(std(Yc, 0, 2, 'omitnan'), 1, size(Yv, 2));
+%     Ycm = repmat(mean(Yc, 2, 'omitnan'), 1, size(Yc, 2));
+%     Ycs = repmat(std(Yc, 0, 2, 'omitnan'), 1, size(Yc, 2));
+%     Yvm = repmat(mean(Yc, 2, 'omitnan'), 1, size(Yv, 2));
+%     Yvs = repmat(std(Yc, 0, 2, 'omitnan'), 1, size(Yv, 2));
+    Ycm = zeros(size(Yc,1), size(Yc,2));
+    Ycs = ones(size(Yc,1), size(Yc,2));
+    Yvm = zeros(size(Yc,1), size(Yv,2));
+    Yvs = ones(size(Yc,1), size(Yv,2));
     Yc = (Yc-Ycm) ./ Ycs;
     
     nets = cell(1,nsims);
