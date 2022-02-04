@@ -22,8 +22,10 @@ Yc = [extractfield(C, 'GPP')' extractfield(C, 'NEE')' extractfield(C, 'ET')']';
 
 % put all y variables on common scale (so that variance doesn't overfit
 % to WUE, which is ~1 order of magnitude greater than other variables
-Ycm = repmat(mean(Yc, 2, 'omitnan'), 1, size(Yc, 2));
-Ycs = repmat(std(Yc, 0, 2, 'omitnan'), 1, size(Yc, 2));
+% Ycm = repmat(mean(Yc, 2, 'omitnan'), 1, size(Yc, 2));
+% Ycs = repmat(std(Yc, 0, 2, 'omitnan'), 1, size(Yc, 2));
+Ycm = zeros(size(Yc,1), size(Yc,2));
+Ycs = ones(size(Yc,1), size(Yc,2));
 Yc = (Yc-Ycm) ./ Ycs;
 
 % Initialize validation matrix
