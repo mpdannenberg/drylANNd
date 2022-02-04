@@ -78,7 +78,7 @@ h = figure('Color','w');
 h.Units = 'inches';
 h.Position = [1 1 5 4];
 
-ym = nanmean(dMAE_GPP, 2);
+ym = nanmedian(dMAE_GPP, 2);
 [~,idx] = sort(ym,'ascend');
 
 for i = 1:length(ulc)
@@ -95,7 +95,7 @@ set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9)
 ax.Position(1) = 0.22;
 ax.Position(3) = 0.75;
 text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right','FontSize',9)
-lgd = legend('ENF','GRA','SAV','SHB','Mean', 'Location','southeast', 'FontSize',9);
+lgd = legend('ENF','GRA','SAV','SHB','Median', 'Location','southeast', 'FontSize',9);
 legend('boxoff')
 
 set(gcf,'PaperPositionMode','auto','InvertHardCopy','off')
@@ -107,7 +107,7 @@ h = figure('Color','w');
 h.Units = 'inches';
 h.Position = [1 1 5 4];
 
-ym = nanmean(dMAE_NEE, 2);
+ym = nanmedian(dMAE_NEE, 2);
 [~,idx] = sort(ym,'ascend');
 
 for i = 1:length(ulc)
@@ -124,7 +124,7 @@ set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9)
 ax.Position(1) = 0.22;
 ax.Position(3) = 0.75;
 text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right','FontSize',9)
-lgd = legend('ENF','GRA','SAV','SHB','Mean', 'Location','southeast', 'FontSize',9);
+lgd = legend('ENF','GRA','SAV','SHB','Median', 'Location','southeast', 'FontSize',9);
 legend('boxoff')
 
 set(gcf,'PaperPositionMode','auto','InvertHardCopy','off')
@@ -136,7 +136,7 @@ h = figure('Color','w');
 h.Units = 'inches';
 h.Position = [1 1 5 4];
 
-ym = nanmean(dMAE_ET, 2);
+ym = nanmedian(dMAE_ET, 2);
 [~,idx] = sort(ym,'ascend');
 
 for i = 1:length(ulc)
@@ -153,7 +153,7 @@ set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9)
 ax.Position(1) = 0.22;
 ax.Position(3) = 0.75;
 text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right','FontSize',9)
-lgd = legend('ENF','GRA','SAV','SHB','Mean', 'Location','southeast', 'FontSize',9);
+lgd = legend('ENF','GRA','SAV','SHB','Median', 'Location','southeast', 'FontSize',9);
 legend('boxoff')
 
 set(gcf,'PaperPositionMode','auto','InvertHardCopy','off')
