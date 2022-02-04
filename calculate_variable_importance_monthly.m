@@ -3,20 +3,14 @@ tic
 
 nsims = 100;
 vars = {'NDVI','EVI','NIRv','kNDVI',...
-        'LSWI','MOD11\_Day','MOD11\_Night','MYD11\_Day','MYD11\_Night',...
-        'L4SM\_Root','L4SM\_Surf','L4SM\_TSoil','L3SM\_VegOpacity'};
+    'LSWI1','LSWI2','LSWI3','MOD11_Day','MOD11_Night','MYD11_Day','MYD11_Night',...
+    'L4SM_Root','L4SM_Surf','L4SM_TSoil'};
 ks = length(vars);
 rng(3);
 
 load ./data/Ameriflux_monthly;
 load ./output/DrylANNd_monthly.mat;
 n = length(Ameriflux_monthly);
-% Single savanna and shrub classes
-lc = {Ameriflux_monthly.IGBP}; 
-[Ameriflux_monthly(strcmp(lc, 'WSA')).IGBP] = deal('SAV');
-[Ameriflux_monthly(strcmp(lc, 'OSH')|strcmp(lc, 'CSH')).IGBP] = deal('SHB');
-[Ameriflux_monthly(strcmp({Ameriflux_monthly.Site}, 'US-Mpj')).IGBP] = deal('SAV');
-clear lc;
 
 dMAE_GPP = NaN(ks,n);
 dMAE_NEE = NaN(ks,n);
@@ -29,29 +23,33 @@ for i = 1:n
     Ameriflux_monthly(i).ET = Ameriflux_monthly(i).LE * (1/1000000) * 60 * 60 * 24 * 0.408; % W m-2 --> MJ m-2 day-2 --> mm day-1
     C = Ameriflux_monthly(i);
     Xc = [extractfield(C, 'NDVI')' extractfield(C, 'EVI')' extractfield(C, 'NIRv')' ...
-        extractfield(C, 'kNDVI')' ...
-        extractfield(C, 'LSWI3')' extractfield(C, 'MOD11_Day')' extractfield(C, 'MOD11_Night')' ...
-        extractfield(C, 'MYD11_Day')' extractfield(C, 'MYD11_Night')' extractfield(C, 'L4SM_Root')' ...
-        extractfield(C, 'L4SM_Surf')' extractfield(C, 'L4SM_Tsoil')' extractfield(C, 'L3SM_VegOpacity')']'; % Add more as needed
+        extractfield(C, 'kNDVI')' extractfield(C, 'LSWI1')' extractfield(C, 'LSWI2')' extractfield(C, 'LSWI3')' ...
+        extractfield(C, 'MOD11_Day')' extractfield(C, 'MOD11_Night')' extractfield(C, 'MYD11_Day')' extractfield(C, 'MYD11_Night')' ...
+        extractfield(C, 'L4SM_Root')' extractfield(C, 'L4SM_Surf')' extractfield(C, 'L4SM_Tsoil')' ...
+        extractfield(C, 'MCD12_FOR')' extractfield(C, 'MCD12_GRS')' extractfield(C, 'MCD12_SAV')' extractfield(C, 'MCD12_SHB')']'; % Add more as needed
     Yc = [extractfield(C, 'GPP')' extractfield(C, 'NEE')' extractfield(C, 'ET')']'; 
-    Yv = NaN(3, size(Xc,2), nsims);
-    Yvv = NaN(3, size(Xc,2), nsims);
     
-    nets = DrylANNd(strcmp({DrylANNd.IGBP}, Ameriflux_monthly(i).IGBP)).NNets;
+    % Initialize validation matrix
+    Yv = NaN(size(Yc,1), size(Xc,2), nsims);
+    Yvv = NaN(size(Yc,1), size(Xc,2), nsims);
+    
+    nets = DrylANNd.NNets;
     
     for k = 1:ks
         
-        mu = nanmean(Xc(k,:));
-        s = nanstd(Xc(k,:));
+        kidx = find(strcmp(vars(k), DrylANNd.Xnames));
+
+        mu = nanmean(Xc(kidx,:));
+        s = nanstd(Xc(kidx,:));
         
         for j = 1:nsims
             
             Xcc = Xc;
-            Xcc(k, :) = normrnd(mu, s, [1, size(Xc, 2)]);
+            Xcc(kidx, :) = normrnd(mu, s, [1, size(Xc, 2)]);
             
             net = nets{randi(length(nets), 1)};
-            Yvv(:,:,j) = net(Xcc);
-            Yv(:,:,j) = net(Xc);
+            Yvv(:,:,j) = net(Xcc) .* DrylANNd.Yscale + DrylANNd.Yoffset;
+            Yv(:,:,j) = net(Xc) .* DrylANNd.Yscale + DrylANNd.Yoffset;
 
         end
         Yv_mean = squeeze(nanmean(Yv(:,:,:), 3));
@@ -66,25 +64,39 @@ end
 toc
 
 % Plot GPP variable importance
+varlabels = {'NDVI','EVI','NIRv','kNDVI','LSWI (band 5)','LSWI (band 6)','LSWI (band 7)',...
+    'MOD11 (Day)','MOD11 (Night)','MYD11 (Day)','MYD11 (Night)',...
+    'L4SM (rootzone)','L4SM (surface)','L4SM (T_{soil})'};
+lc = {Ameriflux_monthly.IGBP}; 
+lc(strcmp(lc, 'CSH') | strcmp(lc, 'OSH')) = {'SHB'};
+lc(strcmp(lc, 'WSA')) = {'SAV'};
+lc(strcmp({Ameriflux_monthly.Site}, 'US-Mpj')) = {'SAV'};
+ulc = unique(lc);
+clr = wesanderson('aquatic4'); clr(3,:) = [];
+
 h = figure('Color','w');
 h.Units = 'inches';
 h.Position = [1 1 5 4];
 
-ym = nanmean(dMAE_GPP, 2);
-yl = quantile(dMAE_GPP, 0.05, 2);
-yu = quantile(dMAE_GPP, 0.95, 2);
+ym = nanmedian(dMAE_GPP, 2);
 [~,idx] = sort(ym,'ascend');
 
-scatter(ym(idx), 1:ks, 40, 'k', 'filled')
-hold on;
-plot([yl(idx) yu(idx)]', [(1:ks)' (1:ks)']', 'k-')
+for i = 1:length(ulc)
+    lcidx = find(strcmp(lc, ulc{i}));
+    dmae = dMAE_GPP(idx, lcidx);
+    scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)', [],1), 10, clr(i,:), 'filled')
+    hold on;
+end
+scatter(ym(idx), 1:ks, 40, 'k', 'Marker','|', 'LineWidth',1.5)
 xlabel('\DeltaMAE (g C m^{-2} day^{-1})')
 ax = gca;
 box off;
 set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9)
 ax.Position(1) = 0.22;
 ax.Position(3) = 0.75;
-text(repmat(ax.XLim(1),1,ks), 1:ks, vars(idx), 'HorizontalAlignment','right','FontSize',9)
+text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right','FontSize',9)
+lgd = legend('ENF','GRA','SAV','SHB','Mean', 'Location','southeast', 'FontSize',9);
+legend('boxoff')
 
 set(gcf,'PaperPositionMode','auto','InvertHardCopy','off')
 print('-dtiff','-f1','-r300','./output/DrylANNd_variableimportance_GPP_monthly.tif')
@@ -95,21 +107,25 @@ h = figure('Color','w');
 h.Units = 'inches';
 h.Position = [1 1 5 4];
 
-ym = nanmean(dMAE_NEE, 2);
-yl = quantile(dMAE_NEE, 0.05, 2);
-yu = quantile(dMAE_NEE, 0.95, 2);
+ym = nanmedian(dMAE_NEE, 2);
 [~,idx] = sort(ym,'ascend');
 
-scatter(ym(idx), 1:ks, 40, 'k', 'filled')
-hold on;
-plot([yl(idx) yu(idx)]', [(1:ks)' (1:ks)']', 'k-')
+for i = 1:length(ulc)
+    lcidx = find(strcmp(lc, ulc{i}));
+    dmae = dMAE_NEE(idx, lcidx);
+    scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)', [],1), 10, clr(i,:), 'filled')
+    hold on;
+end
+scatter(ym(idx), 1:ks, 40, 'k', 'Marker','|', 'LineWidth',1.5)
 xlabel('\DeltaMAE (g C m^{-2} day^{-1})')
 ax = gca;
 box off;
 set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9)
 ax.Position(1) = 0.22;
 ax.Position(3) = 0.75;
-text(repmat(ax.XLim(1),1,ks), 1:ks, vars(idx), 'HorizontalAlignment','right','FontSize',9)
+text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right','FontSize',9)
+lgd = legend('ENF','GRA','SAV','SHB','Mean', 'Location','southeast', 'FontSize',9);
+legend('boxoff')
 
 set(gcf,'PaperPositionMode','auto','InvertHardCopy','off')
 print('-dtiff','-f1','-r300','./output/DrylANNd_variableimportance_NEE_monthly.tif')
@@ -120,21 +136,25 @@ h = figure('Color','w');
 h.Units = 'inches';
 h.Position = [1 1 5 4];
 
-ym = nanmean(dMAE_ET, 2);
-yl = quantile(dMAE_ET, 0.05, 2);
-yu = quantile(dMAE_ET, 0.95, 2);
+ym = nanmedian(dMAE_ET, 2);
 [~,idx] = sort(ym,'ascend');
 
-scatter(ym(idx), 1:ks, 40, 'k', 'filled')
-hold on;
-plot([yl(idx) yu(idx)]', [(1:ks)' (1:ks)']', 'k-')
+for i = 1:length(ulc)
+    lcidx = find(strcmp(lc, ulc{i}));
+    dmae = dMAE_ET(idx, lcidx);
+    scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)', [],1), 10, clr(i,:), 'filled')
+    hold on;
+end
+scatter(ym(idx), 1:ks, 40, 'k', 'Marker','|', 'LineWidth',1.5)
 xlabel('\DeltaMAE (mm day^{-1})')
 ax = gca;
 box off;
 set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9)
 ax.Position(1) = 0.22;
 ax.Position(3) = 0.75;
-text(repmat(ax.XLim(1),1,ks), 1:ks, vars(idx), 'HorizontalAlignment','right','FontSize',9)
+text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right','FontSize',9)
+lgd = legend('ENF','GRA','SAV','SHB','Mean', 'Location','southeast', 'FontSize',9);
+legend('boxoff')
 
 set(gcf,'PaperPositionMode','auto','InvertHardCopy','off')
 print('-dtiff','-f1','-r300','./output/DrylANNd_variableimportance_ET_monthly.tif')
