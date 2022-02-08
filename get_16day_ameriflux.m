@@ -58,6 +58,8 @@ for i = 1:n
     Ameriflux_16day(i).MCD12_GRS = NaN(nt, 1);
     Ameriflux_16day(i).MCD12_SAV = NaN(nt, 1);
     Ameriflux_16day(i).MCD12_SHB = NaN(nt, 1);
+    Ameriflux_16day(i).MOD17_GPP = NaN(nt, 1);
+    Ameriflux_16day(i).MOD16_ET = NaN(nt, 1);
 
     for y = 1:length(yrs)
         for d = 1:length(doys)
@@ -293,6 +295,18 @@ for i = 1:n
             temp = Ameriflux(i).MCD12_SHB(idx); 
             if sum(~isnan(temp)) >= sampthresh
                 Ameriflux_16day(i).MCD12_SHB(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+            end
+            
+            % MOD17_GPP
+            temp = Ameriflux(i).MOD17_GPP(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_16day(i).MOD17_GPP(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
+            end
+            
+            % MOD16_ET
+            temp = Ameriflux(i).MOD16_ET(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_16day(i).MOD16_ET(yr==yrs(y) & dy==doys(d)) = nanmean(temp);
             end
             
         end
