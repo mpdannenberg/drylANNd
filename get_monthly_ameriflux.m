@@ -61,6 +61,12 @@ for i = 1:n
     Ameriflux_monthly(i).MCD12_SHB = NaN(nt, 1);
     Ameriflux_monthly(i).MOD17_GPP = NaN(nt, 1);
     Ameriflux_monthly(i).MOD16_ET = NaN(nt, 1);
+    Ameriflux_monthly(i).Rangeland_AFG = NaN(nt, 1);
+    Ameriflux_monthly(i).Rangeland_PFG = NaN(nt, 1);
+    Ameriflux_monthly(i).Rangeland_SHR = NaN(nt, 1);
+    Ameriflux_monthly(i).Rangeland_TRE = NaN(nt, 1);
+    Ameriflux_monthly(i).Rangeland_LTR = NaN(nt, 1);
+    Ameriflux_monthly(i).Rangeland_BGR = NaN(nt, 1);
 
     for y = 1:length(yrs)
         for d = 1:length(mos)
@@ -308,6 +314,42 @@ for i = 1:n
             temp = Ameriflux(i).MOD16_ET(idx); 
             if sum(~isnan(temp)) >= sampthresh
                 Ameriflux_monthly(i).MOD16_ET(yr==yrs(y) & mo==mos(d)) = nanmean(temp);
+            end
+
+            % Rangeland_AFG
+            temp = Ameriflux(i).Rangeland_AFG(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_monthly(i).Rangeland_AFG(yr==yrs(y) & mo==mos(d)) = nanmean(temp);
+            end
+            
+            % Rangeland_PFG
+            temp = Ameriflux(i).Rangeland_PFG(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_monthly(i).Rangeland_PFG(yr==yrs(y) & mo==mos(d)) = nanmean(temp);
+            end
+            
+            % Rangeland_SHR
+            temp = Ameriflux(i).Rangeland_SHR(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_monthly(i).Rangeland_SHR(yr==yrs(y) & mo==mos(d)) = nanmean(temp);
+            end
+            
+            % Rangeland_TRE
+            temp = Ameriflux(i).Rangeland_TRE(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_monthly(i).Rangeland_TRE(yr==yrs(y) & mo==mos(d)) = nanmean(temp);
+            end
+            
+            % Rangeland_LTR
+            temp = Ameriflux(i).Rangeland_LTR(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_monthly(i).Rangeland_LTR(yr==yrs(y) & mo==mos(d)) = nanmean(temp);
+            end
+            
+            % Rangeland_BGR
+            temp = Ameriflux(i).Rangeland_BGR(idx); 
+            if sum(~isnan(temp)) >= sampthresh
+                Ameriflux_monthly(i).Rangeland_BGR(yr==yrs(y) & mo==mos(d)) = nanmean(temp);
             end
             
         end
