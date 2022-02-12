@@ -3,7 +3,7 @@
 nnsize = [20 12]; % size of the hidden layer(s)
 nsims = 20;
 rng(3);
-excludeSites = {'US-CZ4','US-Me2','US-Me6','US-Sne','US-Snf'}; % exclude sites from calibration (not dryland, missing data, or weird site)
+excludeSites = {'MX-EMg','US-CZ4','US-Me2','US-Sne','US-Snf'}; % exclude sites from calibration (not dryland, missing data, or weird site)
 
 load ./data/Ameriflux_8day;
 Ameriflux_8day = Ameriflux_8day(~ismember({Ameriflux_8day.Site}, excludeSites));
@@ -25,12 +25,12 @@ for j = 1:n
         extractfield(C, 'kNDVI')' extractfield(C, 'LSWI1')' extractfield(C, 'LSWI2')' extractfield(C, 'LSWI3')' ...
         extractfield(C, 'MOD11_Day')' extractfield(C, 'MOD11_Night')' extractfield(C, 'MYD11_Day')' extractfield(C, 'MYD11_Night')' ...
         extractfield(C, 'L4SM_Root')' extractfield(C, 'L4SM_Surf')' extractfield(C, 'L4SM_Tsoil')' ...
-        extractfield(C, 'MCD12_FOR')' extractfield(C, 'MCD12_GRS')' extractfield(C, 'MCD12_SAV')' extractfield(C, 'MCD12_SHB')']'; % Add more as needed
+        extractfield(C, 'Rangeland_AFG')' extractfield(C, 'Rangeland_PFG')' extractfield(C, 'Rangeland_SHR')' extractfield(C, 'Rangeland_TRE')' extractfield(C, 'Rangeland_LTR')' extractfield(C, 'Rangeland_BGR')']'; % Add more as needed
     Xv = [extractfield(V, 'NDVI')' extractfield(V, 'EVI')' extractfield(V, 'NIRv')' ...
         extractfield(V, 'kNDVI')' extractfield(V, 'LSWI1')' extractfield(V, 'LSWI2')' extractfield(V, 'LSWI3')' ...
         extractfield(V, 'MOD11_Day')' extractfield(V, 'MOD11_Night')' extractfield(V, 'MYD11_Day')' extractfield(V, 'MYD11_Night')' ...
         extractfield(V, 'L4SM_Root')' extractfield(V, 'L4SM_Surf')' extractfield(V, 'L4SM_Tsoil')' ...
-        extractfield(V, 'MCD12_FOR')' extractfield(V, 'MCD12_GRS')' extractfield(V, 'MCD12_SAV')' extractfield(V, 'MCD12_SHB')']'; % Add more as needed
+        extractfield(V, 'Rangeland_AFG')' extractfield(V, 'Rangeland_PFG')' extractfield(V, 'Rangeland_SHR')' extractfield(V, 'Rangeland_TRE')' extractfield(V, 'Rangeland_LTR')' extractfield(V, 'Rangeland_BGR')']'; % Add more as needed
     Yc = [extractfield(C, 'GPP')' extractfield(C, 'NEE')' extractfield(C, 'ET')']'; 
     Yv = NaN(size(Yc,1), size(Xv,2), nsims);
     
