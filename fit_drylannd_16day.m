@@ -1,9 +1,12 @@
 % Fit full DrylANNd model for each PFT
 
+nnsize = [20 12]; % size of the hidden layer(s)
 nsims = 20;
 rng(3);
+excludeSites = {'MX-EMg','US-CZ4','US-Me2','US-Sne','US-Snf'}; % exclude sites from calibration (not dryland, missing data, or weird site)
 
 load ./data/Ameriflux_16day;
+Ameriflux_16day = Ameriflux_16day(~ismember({Ameriflux_16day.Site}, excludeSites));
 n = length(Ameriflux_16day);
 
 % Convert monthly mean latent heat flux to monthly mean daily ET
@@ -17,7 +20,7 @@ Xc = [extractfield(C, 'NDVI')' extractfield(C, 'EVI')' extractfield(C, 'NIRv')' 
     extractfield(C, 'kNDVI')' extractfield(C, 'LSWI1')' extractfield(C, 'LSWI2')' extractfield(C, 'LSWI3')' ...
     extractfield(C, 'MOD11_Day')' extractfield(C, 'MOD11_Night')' extractfield(C, 'MYD11_Day')' extractfield(C, 'MYD11_Night')' ...
     extractfield(C, 'L4SM_Root')' extractfield(C, 'L4SM_Surf')' extractfield(C, 'L4SM_Tsoil')' ...
-    extractfield(C, 'MCD12_FOR')' extractfield(C, 'MCD12_GRS')' extractfield(C, 'MCD12_SAV')' extractfield(C, 'MCD12_SHB')']'; % Add more as needed
+    extractfield(C, 'Rangeland_AFG')' extractfield(C, 'Rangeland_PFG')' extractfield(C, 'Rangeland_SHR')' extractfield(C, 'Rangeland_TRE')' extractfield(C, 'Rangeland_LTR')' extractfield(C, 'Rangeland_BGR')']'; % Add more as needed
 Yc = [extractfield(C, 'GPP')' extractfield(C, 'NEE')' extractfield(C, 'ET')']'; 
 
 % put all y variables on common scale (so that variance doesn't overfit
@@ -36,7 +39,7 @@ nets = cell(1,nsims);
 trs = cell(1,nsims);
 
 for i = 1:nsims
-    net = feedforwardnet(12);
+    net = feedforwardnet(nnsize);
     net.trainParam.showWindow = false;
     [net, tr] = train(net, Xc, Yc);
 
@@ -60,7 +63,7 @@ DrylANNd.Yscale = Ycs(:, 1);
 DrylANNd.Yoffset = Ycm(:, 1);
 DrylANNd.Xnames = {'NDVI','EVI','NIRv','kNDVI',...
     'LSWI1','LSWI2','LSWI3','MOD11_Day','MOD11_Night','MYD11_Day','MYD11_Night',...
-    'L4SM_Root','L4SM_Surf','L4SM_TSoil','MCD12_FOR','MCD12_GRS','MCD12_SAV','MCD12_SHB'};
+    'L4SM_Root','L4SM_Surf','L4SM_TSoil','Rangeland_AFG','Rangeland_PFG','Rangeland_SHR','Rangeland_TRE','Rangeland_LTR','Rangeland_BGR'};
 DrylANNd.Ynames = {'GPP','NEE','ET'};
 
 save('./output/DrylANNd_16day.mat', 'DrylANNd');
