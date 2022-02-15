@@ -1,6 +1,7 @@
 % Map of US dryland flux sites
 latlim = [31 49];
 lonlim = [-125 -96];
+excludeSites = {'MX-EMg','US-CZ4','US-Me2','US-Sne','US-Snf'}; % exclude sites from calibration (not dryland, missing data, or weird site)
 
 %% Load aridity index
 load ./data/TerraClimate_AridityIndex.mat;
@@ -12,6 +13,7 @@ aridity(ai >= 0.5 & ai<=0.75) = 4;
 
 %% Load Ameriflux data
 load ./data/Ameriflux_daily;
+Ameriflux = Ameriflux(~ismember({Ameriflux.Site}, excludeSites));
 flat = [Ameriflux.Lat];
 flon = [Ameriflux.Lon];
 fdist = zeros(size(flat));
