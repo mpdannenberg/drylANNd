@@ -25,8 +25,17 @@ for i = 1:n
     
 end
 
-flat(fdist == 1) = flat(fdist == 1) + 0.75*rand(1,sum(fdist));
-flon(fdist == 1) = flon(fdist == 1) + 0.75*rand(1,sum(fdist));
+flat(fdist == 1) = flat(fdist == 1) + 0.5*rand(1,sum(fdist));
+flon(fdist == 1) = flon(fdist == 1) + 0.5*rand(1,sum(fdist));
+
+%% land cover
+lc = {Ameriflux.IGBP};
+lc{strcmp({Ameriflux.Site},'US-Mpj')} = 'SAV';
+lc = strrep(lc, 'CSH', 'SHB');
+lc = strrep(lc, 'OSH', 'SHB');
+lc = strrep(lc, 'WSA', 'SAV');
+[C, ia, ic] = unique(lc);
+lc_counts = accumarray(ic, 1);
 
 %% Map
 states = shaperead('usastatehi','UseGeoCoords',true);
@@ -34,6 +43,11 @@ clr = wesanderson('aquatic4');
 dclr1 = make_cmap([clr(1,:); clr(2,:); [1 1 1]], 9);
 dclr2 = make_cmap([clr(5,:); clr(4,:); [1 1 1]], 9);
 dclr = [dclr1(1:8,:);flipud(dclr2(1:8,:))];
+clr(3,:) = [];
+gsc = [0.4 0.4 0.4
+    0.55 0.55 0.55
+    0.7 0.7 0.7
+    0.85 0.85 0.85];
 
 h = figure('Color','w');
 h.Units = 'inches';
@@ -48,10 +62,13 @@ axis off;
 axis image;
 surfm(lat, lon, aridity)
 caxis([0.5 4.5])
-colormap(gca, dclr2(1:2:7,:));
+% colormap(gca, dclr2(1:2:7,:));
+colormap(gca, gsc);
 geoshow(states,'FaceColor','none','EdgeColor',[0.3 0.3 0.3])
-scatterm(flat,flon,20,[0.2 0.2 0.2], 'filled',...
-    'MarkerFaceColor','w', 'MarkerEdgeColor','k');
+% scatterm(flat,flon,20,[0.2 0.2 0.2], 'filled',...
+%     'MarkerFaceColor','w', 'MarkerEdgeColor','k');
+scatterm(flat,flon,20,clr(ic,:), 'filled',...
+    'MarkerEdgeColor','k');
 ax=gca;
 ax.Position(2) = 0.18;
 
@@ -63,16 +80,9 @@ cb.TickLabels = {'hyperarid','arid','semiarid','subhumid'};
 
 %% Pie chart of LC types
 
-lc = {Ameriflux.IGBP};
-lc = strrep(lc, 'CSH', 'SHB');
-lc = strrep(lc, 'OSH', 'SHB');
-lc = strrep(lc, 'WSA', 'SAV');
-[C, ia, ic] = unique(lc);
-lc_counts = accumarray(ic, 1);
-
 h1 = axes('Parent', gcf, 'Position', [0.74 0.77 0.2 0.2]);
 set(h1, 'Color','w')
-p = pie(lc_counts, zeros(size(lc_counts)), C);
+p = pie(lc_counts, ones(size(lc_counts)), C);
 colormap(gca, clr)
 set(findobj(p,'Type','text'), 'FontSize',8);
 
