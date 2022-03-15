@@ -1,6 +1,6 @@
 % Test DrylANNd model for GPP/ET/NEE prediction at SRM
 
-nnsize = [20 12]; % size of the hidden layer(s)
+nnsize = [14 6]; % size of the hidden layer(s)
 nsims = 20;
 rng(3);
 excludeSites = {'MX-EMg','US-CZ4','US-Me2','US-Sne','US-Snf'}; % exclude sites from calibration (not dryland, missing data, or weird site)
@@ -52,6 +52,9 @@ for j = 1:n
     for i = 1:nsims
         net = feedforwardnet(nnsize);
         net.trainParam.showWindow = false;
+        net.divideParam.trainRatio = 0.75;
+        net.divideParam.testRatio = 0.2;
+        net.divideParam.valRatio = 0.05;
         [net, tr] = train(net, Xc, Yc);
 
         Yv(:,:,i) = net(Xv) .* Yvs + Yvm;
@@ -195,6 +198,21 @@ for j = 1:n
     print('-dtiff','-f1','-r300',['./output/validation/monthly/DrylANNd_monthly_scatter_',V.Site,'.tif'])
     close all;
 
+    % Save output
+    DrylANNd(j).NNets = nets;
+    DrylANNd(j).TrainingRecord = trs;
+    DrylANNd(j).TrainingSites = {C.Site};
+    DrylANNd(j).Xtraining = Xc;
+    DrylANNd(j).Ytraining = Yc;
+    DrylANNd(j).Ypredicted = Yv;
+    DrylANNd(j).Yscale = Ycs(:, 1);
+    DrylANNd(j).Yoffset = Ycm(:, 1);
+    DrylANNd(j).Xnames = {'NDVI','EVI','NIRv','kNDVI',...
+        'LSWI1','LSWI2','LSWI3','MOD11_Day','MOD11_Night','MYD11_Day','MYD11_Night',...
+        'L4SM_Root','L4SM_Surf','L4SM_TSoil','Rangeland_AFG','Rangeland_PFG','Rangeland_SHR','Rangeland_TRE','Rangeland_LTR','Rangeland_BGR'};
+    DrylANNd(j).Ynames = {'GPP','NEE','ET'};
+
 end
 
 save('output/validation/monthly/DrylANNd_Ameriflux_validation.mat', 'Ameriflux_monthly', '-v7.3');
+save('./output/DrylANNd_monthly.mat', 'DrylANNd');
