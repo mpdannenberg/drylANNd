@@ -92,3 +92,49 @@ set(gcf,'PaperPositionMode','auto')
 print('-dtiff','-f1','-r300','./output/drylannd-ameriflux-sites.tif')
 close all;
 
+%% Presentation figure 
+h = figure('Color','k');
+h.Units = 'inches';
+h.Position = [1 1 4 4.5];
+
+axesm('winkel','MapLatLimit',latlim,'MapLonLimit',lonlim,'grid',...
+        'on','PLineLocation',4,'MLineLocation',8,'MeridianLabel','on',...
+        'ParallelLabel','on','GLineWidth',0.5,'Frame','off','FFaceColor',...
+        'none', 'FontName', 'Helvetica','GColor',[0.6 0.6 0.6],...
+        'FLineWidth',1, 'FontColor',[0.5 0.5 0.5], 'MLabelParallel',min(latlim)+0.11);
+axis off;
+axis image;
+geoshow(states,'FaceColor','w','EdgeColor','none')
+surfm(lat, lon, aridity)
+caxis([0.5 4.5])
+% colormap(gca, dclr2(1:2:7,:));
+colormap(gca, gsc);
+geoshow(states,'FaceColor','none','EdgeColor',[0.3 0.3 0.3])
+% scatterm(flat,flon,20,[0.2 0.2 0.2], 'filled',...
+%     'MarkerFaceColor','w', 'MarkerEdgeColor','k');
+scatterm(flat,flon,20,clr(ic,:), 'filled',...
+    'MarkerEdgeColor','k');
+ax=gca;
+ax.Position(2) = 0.04;
+
+cb = colorbar('southoutside');
+cb.Position = [0.1 0.06 0.8 0.04];
+cb.Ticks = 1:4;
+cb.TickLength = 0;
+cb.TickLabels = {'hyperarid','arid','semiarid','subhumid'};
+cb.Color = 'w';
+
+%% Pie chart of LC types
+
+h1 = axes('Parent', gcf, 'Position', [0.74 0.77 0.2 0.2]);
+set(h1, 'Color','w')
+p = pie(lc_counts, ones(size(lc_counts)), C);
+colormap(gca, clr)
+set(findobj(p,'Type','text'), 'FontSize',8, 'Color','w');
+
+
+%% Save figure
+set(gcf,'PaperPositionMode','auto','InvertHardCopy','off')
+print('-dtiff','-f1','-r300','./presentation/drylannd-ameriflux-sites.tif')
+close all;
+
