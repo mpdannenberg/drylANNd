@@ -41,11 +41,11 @@ for i = 1:n
     Ys = repmat(yscale, 1, size(Xc,2));
     Ym = repmat(yoffset, 1, size(Xc,2));
 
-    nets = DrylANNd.NNets;
+    nets = DrylANNd(i).NNets;
     
     for k = 1:ks
         
-        kidx = find(strcmp(vars(k), DrylANNd.Xnames));
+        kidx = find(strcmp(vars(k), DrylANNd(i).Xnames));
 
         mu = mean(Xc(kidx,:), 'omitnan');
         s = std(Xc(kidx,:), 'omitnan');
@@ -169,7 +169,7 @@ h.Position = [1 1 3.5 8];
 axf = tight_subplot(3, 1, 0.08, [0.1 0.04], [0.1 0.04]);
 
 % GPP
-xlim = [-25 175];
+xlim = [-25 125];
 axes(axf(1))
 ym = nanmedian(dMAE_GPP, 2);
 [~,idx] = sort(ym,'ascend');
@@ -189,13 +189,13 @@ set(ax, 'TickDir','out', 'TickLength',[0.025 0],'FontSize',9,...
 ax.Position(1) = 0.28;
 ax.Position(3) = 0.7;
 text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right','FontSize',8,'Color','w')
-lgd = legend('ENF','GRS','SAV','SHB', 'Location','northoutside', 'FontSize',7, 'Orientation','horizontal');
+lgd = legend('ENF','GRS','SAV','SHB', 'Location','northoutside', 'FontSize',7, 'Orientation','horizontal', 'TextColor','w');
 lgd.Position(2) = 0.97;
 legend('boxoff')
 text(xlim(2),1,'a', 'FontSize',12, 'HorizontalAlignment','right')
 
 % NEE
-xlim = [-25 175];
+xlim = [-25 125];
 axes(axf(2))
 ym = nanmedian(dMAE_NEE, 2);
 [~,idx] = sort(ym,'ascend');
@@ -218,7 +218,7 @@ text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right
 text(xlim(2),1,'b', 'FontSize',12, 'HorizontalAlignment','right')
 
 % ET
-xlim = [-25 175];
+xlim = [-25 125];
 axes(axf(3))
 ym = nanmedian(dMAE_ET, 2);
 [~,idx] = sort(ym,'ascend');

@@ -41,11 +41,11 @@ for i = 1:n
     Ys = repmat(yscale, 1, size(Xc,2));
     Ym = repmat(yoffset, 1, size(Xc,2));
 
-    nets = DrylANNd.NNets;
+    nets = DrylANNd(i).NNets;
     
     for k = 1:ks
         
-        kidx = find(strcmp(vars(k), DrylANNd.Xnames));
+        kidx = find(strcmp(vars(k), DrylANNd(i).Xnames));
 
         mu = mean(Xc(kidx,:), 'omitnan');
         s = std(Xc(kidx,:), 'omitnan');
