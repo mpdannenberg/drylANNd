@@ -6,7 +6,8 @@ credInt = [0.1 0.9];
 
 % Load model
 load ./output/DrylANNd_monthly.mat;
-nets = DrylANNd.NNets;
+nets = extractfield(DrylANNd, 'NNets');
+nets = horzcat(nets{:});
 nsims = length(nets);
 yscale = DrylANNd.Yscale;
 yoffset = DrylANNd.Yoffset;
@@ -18,8 +19,7 @@ load ./data/TerraClimate_AridityIndex.mat;
 load ./data/SMAP_monthly.mat;
 load ./data/LST_monthly.mat;
 load ./data/NBAR_monthly.mat;
-load ./data/MCD12C1_fc.mat;
-clear MCD12C1_WAT MCD12C1_CRP MCD12C1_BSV;
+load ./data/RangelandAnalysis.mat;
 [nt, ny, nx] = size(SMAP_RZSM_monthly);
 
 % Create empty arrays for response variables
@@ -51,10 +51,12 @@ for t = 1:nt
         SMAP_RZSM_monthly(t, ai <= ai_threshold)
         SMAP_SFSM_monthly(t, ai <= ai_threshold)
         SMAP_TS_monthly(t, ai <= ai_threshold)
-        MCD12C1_FOR(ai <= ai_threshold)'
-        MCD12C1_GRS(ai <= ai_threshold)'
-        MCD12C1_SAV(ai <= ai_threshold)'
-        MCD12C1_SHB(ai <= ai_threshold)'];
+        AFG(ai <= ai_threshold)'
+        PFG(ai <= ai_threshold)'
+        SHR(ai <= ai_threshold)'
+        TRE(ai <= ai_threshold)'
+        LTR(ai <= ai_threshold)'
+        BGR(ai <= ai_threshold)'];
 
     Y = NaN(length(yscale), size(X,2), nsims);
     Ys = repmat(yscale, 1, size(X,2));
