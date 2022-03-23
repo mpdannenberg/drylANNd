@@ -89,7 +89,7 @@ h.Position = [1 1 3.5 8];
 axf = tight_subplot(3, 1, 0.08, [0.1 0.04], [0.1 0.04]);
 
 % GPP
-xlim = [-25 175];
+xlim = [-25 110];
 axes(axf(1))
 ym = nanmedian(dMAE_GPP, 2);
 [~,idx] = sort(ym,'ascend');
@@ -114,7 +114,7 @@ legend('boxoff')
 text(xlim(2),1,'a', 'FontSize',12, 'HorizontalAlignment','right')
 
 % NEE
-xlim = [-25 175];
+xlim = [-25 110];
 axes(axf(2))
 ym = nanmedian(dMAE_NEE, 2);
 [~,idx] = sort(ym,'ascend');
@@ -136,7 +136,7 @@ text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right
 text(xlim(2),1,'b', 'FontSize',12, 'HorizontalAlignment','right')
 
 % ET
-xlim = [-25 175];
+xlim = [-25 110];
 axes(axf(3))
 ym = nanmedian(dMAE_ET, 2);
 [~,idx] = sort(ym,'ascend');
@@ -169,7 +169,7 @@ h.Position = [1 1 3.5 8];
 axf = tight_subplot(3, 1, 0.08, [0.1 0.04], [0.1 0.04]);
 
 % GPP
-xlim = [-25 125];
+xlim = [-25 110];
 axes(axf(1))
 ym = nanmedian(dMAE_GPP, 2);
 [~,idx] = sort(ym,'ascend');
@@ -195,7 +195,7 @@ legend('boxoff')
 text(xlim(2),1,'a', 'FontSize',12, 'HorizontalAlignment','right')
 
 % NEE
-xlim = [-25 125];
+xlim = [-25 110];
 axes(axf(2))
 ym = nanmedian(dMAE_NEE, 2);
 [~,idx] = sort(ym,'ascend');
@@ -218,7 +218,7 @@ text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right
 text(xlim(2),1,'b', 'FontSize',12, 'HorizontalAlignment','right')
 
 % ET
-xlim = [-25 125];
+xlim = [-25 110];
 axes(axf(3))
 ym = nanmedian(dMAE_ET, 2);
 [~,idx] = sort(ym,'ascend');
