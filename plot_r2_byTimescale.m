@@ -79,6 +79,31 @@ ET_modis(3) = r;
 clr = wesanderson('aquatic4'); clr(3,:) = [];
 clr2 = make_cmap([1 1 1; clr(4,:)], 6);
 
+h = figure('Color','w');
+h.Units = 'inches';
+h.Position = [1 1 6.5 3];
+
+b = bar([GPP_drylannd'; NEE_drylannd'; ET_drylannd']);
+b(1).FaceColor = clr2(2,:);
+b(2).FaceColor = clr2(4,:);
+b(3).FaceColor = clr2(6,:);
+set(gca, 'Color','w', 'YColor','k', 'XColor','k', 'TickDir','out',...
+    'XTickLabel',{'GPP','NEE','ET'}, 'FontSize',10)
+box off;
+hold on;
+plot([1-0.225 1 1+0.225], GPP_modis, 'k+', 'LineWidth',1.2, 'Color', [0.2 0.2 0.2])
+plot([3-0.225 3 3+0.225], ET_modis, 'k+', 'LineWidth',1.2, 'Color', [0.2 0.2 0.2])
+lgd = legend(b, '8-day', '16-day', 'monthly', 'Location','north', 'Orientation','horizontal');
+lgd.FontSize = 9;
+lgd.Position(2) = 0.9;
+legend('boxoff')
+ylabel('R^{2}', 'Rotation',0, 'HorizontalAlignment','right')
+
+set(gcf,'PaperPositionMode','auto','InvertHardCopy','off')
+print('-dtiff','-f1','-r300','./output/validation/timescale-r2.tif')
+close all;
+
+%% Presentation figure
 h = figure('Color','k');
 h.Units = 'inches';
 h.Position = [1 1 6.5 3];
