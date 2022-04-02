@@ -5,11 +5,17 @@ xlbs = {'CZ2','CZ3','Hn2','Hn3','Jo2','KLS','Me6','Mpj','MtB','Rls','Rms','Rwf',
 load ./output/validation/16day/DrylANNd_Ameriflux_validation.mat;
 n = length(Ameriflux_16day);
 lc = {Ameriflux_16day.IGBP};
+lc{strcmp({Ameriflux_16day.Site},'US-Mpj')} = 'SAV';
 lc = strrep(lc, 'CSH', 'SHB');
 lc = strrep(lc, 'OSH', 'SHB');
 lc = strrep(lc, 'WSA', 'SAV');
 ulc = unique(lc);
 clr = wesanderson('aquatic4'); clr(3,:) = [];
+
+[~, I] = sort(lc);
+Ameriflux_16day = Ameriflux_16day(I);
+lc = lc(I);
+xlbs = xlbs(I);
 
 h = figure('Color','w');
 h.Units = 'inches';
@@ -62,9 +68,9 @@ yhat1 = extractfield(C, 'GPP_DrylANNd');
 yhat2 = extractfield(C, 'MOD17_GPP');
 ib = ~isnan(yhat1);
 r = corr(y(ib)', yhat1(ib)', 'rows','pairwise')^2;
-bar(n+2, r, 'FaceColor',clr(1, :), 'FaceAlpha',0.7, 'EdgeColor',clr(1, :), 'LineWidth',2)
+b1 = bar(n+2, r, 'FaceColor',clr(1, :), 'FaceAlpha',0.7, 'EdgeColor',clr(1, :), 'LineWidth',2);
 r = corr(y(ib)', yhat2(ib)', 'rows','pairwise')^2;
-plot(n+2, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2)
+p1 = plot(n+2, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2);
 
 % GRS overall
 C = Ameriflux_16day(strcmp(lc, ulc(2)));
@@ -73,7 +79,7 @@ yhat1 = extractfield(C, 'GPP_DrylANNd');
 yhat2 = extractfield(C, 'MOD17_GPP');
 ib = ~isnan(yhat1);
 r = corr(y(ib)', yhat1(ib)', 'rows','pairwise')^2;
-bar(n+3, r, 'FaceColor',clr(2, :), 'FaceAlpha',0.7, 'EdgeColor',clr(2, :), 'LineWidth',2)
+b2 = bar(n+3, r, 'FaceColor',clr(2, :), 'FaceAlpha',0.7, 'EdgeColor',clr(2, :), 'LineWidth',2);
 r = corr(y(ib)', yhat2(ib)', 'rows','pairwise')^2;
 plot(n+3, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2)
 
@@ -84,7 +90,7 @@ yhat1 = extractfield(C, 'GPP_DrylANNd');
 yhat2 = extractfield(C, 'MOD17_GPP');
 ib = ~isnan(yhat1);
 r = corr(y(ib)', yhat1(ib)', 'rows','pairwise')^2;
-bar(n+4, r, 'FaceColor',clr(3, :), 'FaceAlpha',0.7, 'EdgeColor',clr(3, :), 'LineWidth',2)
+b3 = bar(n+4, r, 'FaceColor',clr(3, :), 'FaceAlpha',0.7, 'EdgeColor',clr(3, :), 'LineWidth',2);
 r = corr(y(ib)', yhat2(ib)', 'rows','pairwise')^2;
 plot(n+4, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2)
 
@@ -95,7 +101,7 @@ yhat1 = extractfield(C, 'GPP_DrylANNd');
 yhat2 = extractfield(C, 'MOD17_GPP');
 ib = ~isnan(yhat1);
 r = corr(y(ib)', yhat1(ib)', 'rows','pairwise')^2;
-bar(n+5, r, 'FaceColor',clr(4, :), 'FaceAlpha',0.7, 'EdgeColor',clr(4, :), 'LineWidth',2)
+b4 = bar(n+5, r, 'FaceColor',clr(4, :), 'FaceAlpha',0.7, 'EdgeColor',clr(4, :), 'LineWidth',2);
 r = corr(y(ib)', yhat2(ib)', 'rows','pairwise')^2;
 plot(n+5, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2)
 
@@ -105,6 +111,12 @@ set(gca, 'YLim', [0 1], 'YAxisLocation','right', 'XTick',[1:n (n+2):(n+5)],...
 text(1,1,'b', 'FontSize',12)
 ylb = ylabel('R^{2}', 'Rotation',0, 'HorizontalAlignment','left', 'VerticalAlignment','middle');
 ylb.Position(1) = 37;
+
+lgd = legend([b1, b2, b3, b4, p1], 'ENF', 'GRS', 'SAV', 'SHB', 'MODIS', ...
+    'Location','northoutside', 'Orientation','horizontal');
+lgd.Position(1) = 0.38;
+lgd.Position(2) = 0.96;
+legend('boxoff')
 
 %% NEE
 % Overall scatter
