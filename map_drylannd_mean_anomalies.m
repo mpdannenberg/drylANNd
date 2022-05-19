@@ -173,11 +173,11 @@ for i = idx
 
     s = std(siteGPP(:,i), 'omitnan');
     se = s / sqrt(sum(~isnan(siteGPP(:,i))));
-    plot([ym-1.96*se ym+1.96*se], [yhatm yhatm], '-', 'Color',[0.4 0.4 0.4])
+    plot([ym-s ym+s], [yhatm yhatm], '-', 'Color',[0.4 0.4 0.4])
     
     s = std(predGPP(:,i), 'omitnan');
     se = s / sqrt(sum(~isnan(predGPP(:,i))));
-    plot([ym ym], [yhatm-1.96*se yhatm+1.96*se], '-', 'Color',[0.4 0.4 0.4])
+    plot([ym ym], [yhatm-s yhatm+s], '-', 'Color',[0.4 0.4 0.4])
 
 end
 ax = gca;
@@ -190,6 +190,7 @@ ylabel('DrylANNd mean GPP (g C m^{-2})', 'FontSize',8)
 ax.Position(1) = 0.6;
 ax.Position(2) = 0.745;
 text(xylims(1)-0.35*diff(xylims), xylims(2), 'b', 'FontSize',12, 'FontWeight','bold', 'VerticalAlignment','middle')
+text(xylims(2), xylims(2), '1:1', 'FontSize',8, 'HorizontalAlignment','right', 'VerticalAlignment','bottom', 'Rotation',45)
 hold off;
 
 % NEE
@@ -206,11 +207,11 @@ for i = idx
 
     s = std(siteNEE(:,i), 'omitnan');
     se = s / sqrt(sum(~isnan(siteNEE(:,i))));
-    plot([ym-1.96*se ym+1.96*se], [yhatm yhatm], '-', 'Color',[0.4 0.4 0.4])
+    plot([ym-s ym+s], [yhatm yhatm], '-', 'Color',[0.4 0.4 0.4])
     
     s = std(predNEE(:,i), 'omitnan');
     se = s / sqrt(sum(~isnan(predNEE(:,i))));
-    plot([ym ym], [yhatm-1.96*se yhatm+1.96*se], '-', 'Color',[0.4 0.4 0.4])
+    plot([ym ym], [yhatm-s yhatm+s], '-', 'Color',[0.4 0.4 0.4])
 
 end
 ax = gca;
@@ -223,6 +224,7 @@ ylabel('DrylANNd mean NEE (g C m^{-2})', 'FontSize',8)
 ax.Position(1) = 0.6;
 ax.Position(2) = 0.418;
 text(xylims(1)-0.35*diff(xylims), xylims(2), 'd', 'FontSize',12, 'FontWeight','bold', 'VerticalAlignment','middle')
+text(xylims(2), xylims(2), '1:1', 'FontSize',8, 'HorizontalAlignment','right', 'VerticalAlignment','bottom', 'Rotation',45)
 hold off;
 
 % ET
@@ -239,11 +241,11 @@ for i = idx
 
     s = std(siteET(:,i), 'omitnan');
     se = s / sqrt(sum(~isnan(siteET(:,i))));
-    plot([ym-1.96*se ym+1.96*se], [yhatm yhatm], '-', 'Color',[0.4 0.4 0.4])
+    plot([ym-s ym+s], [yhatm yhatm], '-', 'Color',[0.4 0.4 0.4])
     
     s = std(predET(:,i), 'omitnan');
     se = s / sqrt(sum(~isnan(predET(:,i))));
-    plot([ym ym], [yhatm-1.96*se yhatm+1.96*se], '-', 'Color',[0.4 0.4 0.4])
+    plot([ym ym], [yhatm-s yhatm+s], '-', 'Color',[0.4 0.4 0.4])
 
 end
 ax = gca;
@@ -256,6 +258,7 @@ ylabel('DrylANNd mean ET (mm)', 'FontSize',8)
 ax.Position(1) = 0.6;
 ax.Position(2) = 0.086;
 text(xylims(1)-0.35*diff(xylims), xylims(2), 'f', 'FontSize',12, 'FontWeight','bold', 'VerticalAlignment','middle')
+text(xylims(2), xylims(2), '1:1', 'FontSize',8, 'HorizontalAlignment','right', 'VerticalAlignment','bottom', 'Rotation',45)
 hold off;
 
 set(gcf,'PaperPositionMode','auto','InvertHardCopy','off')
