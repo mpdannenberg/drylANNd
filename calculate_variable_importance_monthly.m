@@ -94,24 +94,30 @@ axes(axf(1))
 ym = nanmedian(dMAE_GPP, 2);
 [~,idx] = sort(ym,'ascend');
 
+plot([0 0], [0 ks+0.5], 'k-')
+hold on;
+for i = 1:ks
+    plot(xlim, [i i], '-', 'Color',[0.9 0.9 0.9])
+end
+pHandle = cell([1 length(ulc)]);
 for i = 1:length(ulc)
     lcidx = find(strcmp(lc, ulc{i}));
     dmae = dMAE_GPP(idx, lcidx);
-    scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)'+normrnd(0,stagger,size(dmae)), [],1), 10, clr(i,:), 'filled')
-    hold on;
+    pHandle{i} = scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)'+normrnd(0,stagger,size(dmae)), [],1), 15, clr(i,:), 'filled');
 end
-scatter(ym(idx), 1:ks, 40, 'k', 'Marker','|', 'LineWidth',1.5)
+scatter(ym(idx), 1:ks, 50, 'k', 'Marker','|', 'LineWidth',1.5)
 xlabel('\DeltaMAE (%)')
 ax = gca;
 box off;
-set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9, 'XLim',xlim)
+set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9, 'XLim',xlim, 'YTick',1:ks)
 ax.Position(1) = 0.28;
 ax.Position(3) = 0.7;
 text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right','FontSize',8)
-lgd = legend('ENF','GRS','SAV','SHB', 'Location','northoutside', 'FontSize',7, 'Orientation','horizontal');
+lgd = legend([pHandle{1} pHandle{2} pHandle{3} pHandle{4}], 'ENF','GRS','SAV','SHB', 'Location','northoutside', 'FontSize',7, 'Orientation','horizontal');
 lgd.Position(2) = 0.97;
 legend('boxoff')
 text(xlim(2),1,'a', 'FontSize',12, 'HorizontalAlignment','right')
+hold off;
 
 % NEE
 xlim = [-25 110];
@@ -119,13 +125,17 @@ axes(axf(2))
 ym = nanmedian(dMAE_NEE, 2);
 [~,idx] = sort(ym,'ascend');
 
+plot([0 0], [0 ks+0.5], 'k-')
+hold on;
+for i = 1:ks
+    plot(xlim, [i i], '-', 'Color',[0.9 0.9 0.9])
+end
 for i = 1:length(ulc)
     lcidx = find(strcmp(lc, ulc{i}));
     dmae = dMAE_NEE(idx, lcidx);
-    scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)'+normrnd(0,stagger,size(dmae)), [],1), 10, clr(i,:), 'filled')
-    hold on;
+    scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)'+normrnd(0,stagger,size(dmae)), [],1), 15, clr(i,:), 'filled')
 end
-scatter(ym(idx), 1:ks, 40, 'k', 'Marker','|', 'LineWidth',1.5)
+scatter(ym(idx), 1:ks, 50, 'k', 'Marker','|', 'LineWidth',1.5)
 xlabel('\DeltaMAE (%)')
 ax = gca;
 box off;
@@ -141,13 +151,17 @@ axes(axf(3))
 ym = nanmedian(dMAE_ET, 2);
 [~,idx] = sort(ym,'ascend');
 
+plot([0 0], [0 ks+0.5], 'k-')
+hold on;
+for i = 1:ks
+    plot(xlim, [i i], '-', 'Color',[0.9 0.9 0.9])
+end
 for i = 1:length(ulc)
     lcidx = find(strcmp(lc, ulc{i}));
     dmae = dMAE_ET(idx, lcidx);
-    scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)'+normrnd(0,stagger,size(dmae)), [],1), 10, clr(i,:), 'filled')
-    hold on;
+    scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)'+normrnd(0,stagger,size(dmae)), [],1), 15, clr(i,:), 'filled')
 end
-scatter(ym(idx), 1:ks, 40, 'k', 'Marker','|', 'LineWidth',1.5)
+scatter(ym(idx), 1:ks, 50, 'k', 'Marker','|', 'LineWidth',1.5)
 xlabel('\DeltaMAE (%)')
 ax = gca;
 box off;
