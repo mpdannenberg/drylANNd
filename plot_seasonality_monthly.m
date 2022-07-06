@@ -19,7 +19,7 @@ h = figure('Color','w');
 h.Units = 'inches';
 h.Position = [1 1 6.5 6];
 
-ax = tight_subplot(nrows,ncols,[0.03 0.01],[0.1 0.03],[0.1 0.03]);
+ax = tight_subplot(nrows,ncols,[0.03 0.01],[0.05 0.08],[0.1 0.03]);
 ylim = [0 10];
 
 for i = 1:n
@@ -37,16 +37,16 @@ for i = 1:n
 
     axes(ax(i))
 
-    plot(1:12, mean_y, 'k-', 'LineWidth',1.2)
+    p1 = plot(1:12, mean_y, 'k-', 'LineWidth',1.2);
     hold on;
     plot([1:12; 1:12],...
         [mean_y'-std(y, 0, 2, 'omitnan')'; mean_y'+std(y, 0, 2, 'omitnan')'],...
         'k-', 'LineWidth',1.2)
-    plot((1:12)-0.2, mean_yhat, '-', 'LineWidth',1.2, 'Color',clr(4,:))
+    p2 = plot((1:12)-0.2, mean_yhat, '-', 'LineWidth',1.2, 'Color',clr(4,:));
     plot([1:12; 1:12]-0.2,...
         [mean_yhat'-std(yhat, 0, 2, 'omitnan')'; mean_yhat'+std(yhat, 0, 2, 'omitnan')'],...
         '-', 'LineWidth',1.2, 'Color',clr(4,:))
-    plot((1:12)+0.2, mean_modis, '-', 'LineWidth',1.2, 'Color',[0.6 0.6 0.6])
+    p3 = plot((1:12)+0.2, mean_modis, '-', 'LineWidth',1.2, 'Color',[0.6 0.6 0.6]);
     plot([1:12; 1:12]+0.2,...
         [mean_modis'-std(modis, 0, 2, 'omitnan')'; mean_modis'+std(modis, 0, 2, 'omitnan')'],...
         '-', 'LineWidth',1.2, 'Color',[0.6 0.6 0.6])
@@ -81,6 +81,14 @@ for i = 1:n
         ['R^{2} = ', sprintf('%.2f',r), '; SDR = ', sprintf('%.2f',sdr)],...
         'FontSize',8, 'Color',[0.6 0.6 0.6])
 
+    if i == 2
+        lgd = legend([p1 p2 p3], 'Eddy covariance', 'DrylANNd', 'MODIS', 'Orientation','horizontal');
+        legend('boxoff')
+        lgd.FontSize = 9;
+        lgd.Position(1) = 0.5 - lgd.Position(3)/2;
+        lgd.Position(2) = 0.95;
+    end
+
 end
 
 set(gcf,'PaperPositionMode','auto','InvertHardCopy','off')
@@ -92,7 +100,7 @@ h = figure('Color','w');
 h.Units = 'inches';
 h.Position = [1 1 6.5 6];
 
-ax = tight_subplot(nrows,ncols,[0.03 0.01],[0.1 0.03],[0.1 0.03]);
+ax = tight_subplot(nrows,ncols,[0.03 0.01],[0.05 0.08],[0.1 0.03]);
 ylim = [-4 2.8];
 
 for i = 1:n
@@ -109,11 +117,11 @@ for i = 1:n
     
     plot([0.5 12.5], [0 0], '-', 'Color',[0.2 0.2 0.2], 'LineWidth',0.5)
     hold on;
-    plot(1:12, mean_y, 'k-', 'LineWidth',1.2)
+    p1 = plot(1:12, mean_y, 'k-', 'LineWidth',1.2);
     plot([1:12; 1:12],...
         [mean_y'-std(y, 0, 2, 'omitnan')'; mean_y'+std(y, 0, 2, 'omitnan')'],...
         'k-', 'LineWidth',1.2)
-    plot((1:12)-0.2, mean_yhat, '-', 'LineWidth',1.2, 'Color',clr(4,:))
+    p2 = plot((1:12)-0.2, mean_yhat, '-', 'LineWidth',1.2, 'Color',clr(4,:));
     plot([1:12; 1:12]-0.2,...
         [mean_yhat'-std(yhat, 0, 2, 'omitnan')'; mean_yhat'+std(yhat, 0, 2, 'omitnan')'],...
         '-', 'LineWidth',1.2, 'Color',clr(4,:))
@@ -143,6 +151,14 @@ for i = 1:n
         ['R^{2} = ', sprintf('%.2f',r), '; SDR = ', sprintf('%.2f',sdr)],...
         'FontSize',8, 'Color',clr(4,:))
 
+    if i == 2
+        lgd = legend([p1 p2], 'Eddy covariance', 'DrylANNd', 'Orientation','horizontal');
+        legend('boxoff')
+        lgd.FontSize = 9;
+        lgd.Position(1) = 0.5 - lgd.Position(3)/2;
+        lgd.Position(2) = 0.95;
+    end
+
 end
 
 set(gcf,'PaperPositionMode','auto','InvertHardCopy','off')
@@ -154,7 +170,7 @@ h = figure('Color','w');
 h.Units = 'inches';
 h.Position = [1 1 6.5 6];
 
-ax = tight_subplot(nrows,ncols,[0.03 0.01],[0.1 0.03],[0.1 0.03]);
+ax = tight_subplot(nrows,ncols,[0.03 0.01],[0.05 0.08],[0.1 0.03]);
 ylim = [0 6];
 
 for i = 1:n
@@ -172,16 +188,16 @@ for i = 1:n
 
     axes(ax(i))
 
-    plot(1:12, mean_y, 'k-', 'LineWidth',1.2)
+    p1 = plot(1:12, mean_y, 'k-', 'LineWidth',1.2);
     hold on;
     plot([1:12; 1:12],...
         [mean_y'-std(y, 0, 2, 'omitnan')'; mean_y'+std(y, 0, 2, 'omitnan')'],...
         'k-', 'LineWidth',1.2)
-    plot((1:12)-0.2, mean_yhat, '-', 'LineWidth',1.2, 'Color',clr(4,:))
+    p2 = plot((1:12)-0.2, mean_yhat, '-', 'LineWidth',1.2, 'Color',clr(4,:));
     plot([1:12; 1:12]-0.2,...
         [mean_yhat'-std(yhat, 0, 2, 'omitnan')'; mean_yhat'+std(yhat, 0, 2, 'omitnan')'],...
         '-', 'LineWidth',1.2, 'Color',clr(4,:))
-    plot((1:12)+0.2, mean_modis, '-', 'LineWidth',1.2, 'Color',[0.6 0.6 0.6])
+    p3 = plot((1:12)+0.2, mean_modis, '-', 'LineWidth',1.2, 'Color',[0.6 0.6 0.6]);
     plot([1:12; 1:12]+0.2,...
         [mean_modis'-std(modis, 0, 2, 'omitnan')'; mean_modis'+std(modis, 0, 2, 'omitnan')'],...
         '-', 'LineWidth',1.2, 'Color',[0.6 0.6 0.6])
@@ -215,6 +231,14 @@ for i = 1:n
     text(1, ylim(2)-0.22*diff(ylim),...
         ['R^{2} = ', sprintf('%.2f',r), '; SDR = ', sprintf('%.2f',sdr)],...
         'FontSize',8, 'Color',[0.6 0.6 0.6])
+
+    if i == 2
+        lgd = legend([p1 p2 p3], 'Eddy covariance', 'DrylANNd', 'MODIS', 'Orientation','horizontal');
+        legend('boxoff')
+        lgd.FontSize = 9;
+        lgd.Position(1) = 0.5 - lgd.Position(3)/2;
+        lgd.Position(2) = 0.95;
+    end
 
 end
 
