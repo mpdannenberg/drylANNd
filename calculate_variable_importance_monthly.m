@@ -20,6 +20,9 @@ yoffset = DrylANNd.Yoffset;
 dMAE_GPP = NaN(ks,n);
 dMAE_NEE = NaN(ks,n);
 dMAE_ET = NaN(ks,n);
+dR2_GPP = NaN(ks,n);
+dR2_NEE = NaN(ks,n);
+dR2_ET = NaN(ks,n);
 
 % Loop through each site and calculate change in MAE when variable is
 % destroyed
@@ -66,6 +69,10 @@ for i = 1:n
         dMAE_GPP(k, i) = 100 * (nanmean(abs(Yvv_mean(1,:) - Yc(1,:))) - nanmean(abs(Yv_mean(1,:) - Yc(1,:)))) ./ nanmean(abs(Yv_mean(1,:) - Yc(1,:)));
         dMAE_NEE(k, i) = 100 * (nanmean(abs(Yvv_mean(2,:) - Yc(2,:))) - nanmean(abs(Yv_mean(2,:) - Yc(2,:)))) ./ nanmean(abs(Yv_mean(2,:) - Yc(2,:)));
         dMAE_ET(k, i) = 100 * (nanmean(abs(Yvv_mean(3,:) - Yc(3,:))) - nanmean(abs(Yv_mean(3,:) - Yc(3,:)))) ./ nanmean(abs(Yv_mean(3,:) - Yc(3,:)));
+
+        dR2_GPP(k, i) = corr(Yvv_mean(1,:)', Yc(1,:)', 'rows','pairwise')^2 - corr(Yv_mean(1,:)', Yc(1,:)', 'rows','pairwise')^2;
+        dR2_NEE(k, i) = corr(Yvv_mean(2,:)', Yc(2,:)', 'rows','pairwise')^2 - corr(Yv_mean(2,:)', Yc(2,:)', 'rows','pairwise')^2;
+        dR2_ET(k, i) = corr(Yvv_mean(3,:)', Yc(3,:)', 'rows','pairwise')^2 - corr(Yv_mean(3,:)', Yc(3,:)', 'rows','pairwise')^2;
         
     end
 end
@@ -84,14 +91,45 @@ clr = wesanderson('aquatic4'); clr(3,:) = [];
 
 h = figure('Color','w');
 h.Units = 'inches';
-h.Position = [1 1 3.5 8];
+h.Position = [1 1 6.5 8];
 
-axf = tight_subplot(3, 1, 0.08, [0.1 0.04], [0.1 0.04]);
+axf = tight_subplot(3, 2, 0.08, [0.1 0.04], [0.1 0.04]);
 
 % GPP
 xlim = [-25 110];
 axes(axf(1))
 ym = nanmedian(dMAE_GPP, 2);
+[~,idx] = sort(ym,'ascend'); % if sorting by importance, add (idx) to the "dmae = ...", "scatter(ym...", and "text(repmat..." lines
+
+plot([0 0], [0 ks+0.5], 'k-')
+hold on;
+for i = 1:ks
+    plot(xlim, [i i], '-', 'Color',[0.9 0.9 0.9])
+end
+pHandle = cell([1 length(ulc)]);
+for i = 1:length(ulc)
+    lcidx = find(strcmp(lc, ulc{i}));
+    dmae = dMAE_GPP(:, lcidx);
+    pHandle{i} = scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)'+normrnd(0,stagger,size(dmae)), [],1), 15, clr(i,:), 'filled');
+end
+scatter(ym, 1:ks, 50, 'k', 'Marker','|', 'LineWidth',1.5)
+xlabel('\DeltaMAE (%)')
+ax = gca;
+box off;
+set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9, 'XLim',xlim, 'YTick',1:ks, 'YDir','reverse')
+ax.Position(1) = 0.14;
+ax.Position(3) = 0.4;
+text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels, 'HorizontalAlignment','right','FontSize',8)
+lgd = legend([pHandle{1} pHandle{2} pHandle{3} pHandle{4}], 'ENF','GRS','SAV','SHB', 'Location','northoutside', 'FontSize',7, 'Orientation','horizontal');
+lgd.Position(1) = 0.5 - lgd.Position(3)/2;
+lgd.Position(2) = 0.97;
+legend('boxoff')
+text(xlim(2),ks,'a', 'FontSize',12, 'HorizontalAlignment','right')
+hold off;
+
+xlim = [-0.65 0.25];
+axes(axf(2))
+ym = nanmedian(dR2_GPP, 2);
 [~,idx] = sort(ym,'ascend');
 
 plot([0 0], [0 ks+0.5], 'k-')
@@ -102,26 +140,22 @@ end
 pHandle = cell([1 length(ulc)]);
 for i = 1:length(ulc)
     lcidx = find(strcmp(lc, ulc{i}));
-    dmae = dMAE_GPP(idx, lcidx);
+    dmae = dR2_GPP(:, lcidx);
     pHandle{i} = scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)'+normrnd(0,stagger,size(dmae)), [],1), 15, clr(i,:), 'filled');
 end
-scatter(ym(idx), 1:ks, 50, 'k', 'Marker','|', 'LineWidth',1.5)
-xlabel('\DeltaMAE (%)')
+scatter(ym, 1:ks, 50, 'k', 'Marker','|', 'LineWidth',1.5)
+xlabel('\DeltaR^{2}')
 ax = gca;
 box off;
-set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9, 'XLim',xlim, 'YTick',1:ks)
-ax.Position(1) = 0.28;
-ax.Position(3) = 0.7;
-text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right','FontSize',8)
-lgd = legend([pHandle{1} pHandle{2} pHandle{3} pHandle{4}], 'ENF','GRS','SAV','SHB', 'Location','northoutside', 'FontSize',7, 'Orientation','horizontal');
-lgd.Position(2) = 0.97;
-legend('boxoff')
-text(xlim(2),1,'a', 'FontSize',12, 'HorizontalAlignment','right')
+set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','none','FontSize',9, 'XLim',xlim, 'YTick',1:ks, 'YDir','reverse', 'XDir','reverse')
+ax.Position(1) = 0.57;
+ax.Position(3) = 0.4;
+text(xlim(1),ks,'b', 'FontSize',12, 'HorizontalAlignment','right')
 hold off;
 
 % NEE
 xlim = [-25 110];
-axes(axf(2))
+axes(axf(3))
 ym = nanmedian(dMAE_NEE, 2);
 [~,idx] = sort(ym,'ascend');
 
@@ -132,22 +166,49 @@ for i = 1:ks
 end
 for i = 1:length(ulc)
     lcidx = find(strcmp(lc, ulc{i}));
-    dmae = dMAE_NEE(idx, lcidx);
+    %dmae = dMAE_NEE(idx, lcidx);
+    dmae = dMAE_NEE(:, lcidx);
     scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)'+normrnd(0,stagger,size(dmae)), [],1), 15, clr(i,:), 'filled')
 end
-scatter(ym(idx), 1:ks, 50, 'k', 'Marker','|', 'LineWidth',1.5)
+scatter(ym(:), 1:ks, 50, 'k', 'Marker','|', 'LineWidth',1.5)
 xlabel('\DeltaMAE (%)')
 ax = gca;
 box off;
-set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9,'XLim',xlim)
-ax.Position(1) = 0.28;
-ax.Position(3) = 0.7;
-text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right','FontSize',8)
-text(xlim(2),1,'b', 'FontSize',12, 'HorizontalAlignment','right')
+set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9,'XLim',xlim, 'YDir','reverse')
+ax.Position(1) = 0.14;
+ax.Position(3) = 0.4;
+text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(:), 'HorizontalAlignment','right','FontSize',8)
+text(xlim(2),ks,'c', 'FontSize',12, 'HorizontalAlignment','right')
+
+xlim = [-0.65 0.25];
+axes(axf(4))
+ym = nanmedian(dR2_NEE, 2);
+[~,idx] = sort(ym,'ascend');
+
+plot([0 0], [0 ks+0.5], 'k-')
+hold on;
+for i = 1:ks
+    plot(xlim, [i i], '-', 'Color',[0.9 0.9 0.9])
+end
+pHandle = cell([1 length(ulc)]);
+for i = 1:length(ulc)
+    lcidx = find(strcmp(lc, ulc{i}));
+    dmae = dR2_NEE(:, lcidx);
+    pHandle{i} = scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)'+normrnd(0,stagger,size(dmae)), [],1), 15, clr(i,:), 'filled');
+end
+scatter(ym, 1:ks, 50, 'k', 'Marker','|', 'LineWidth',1.5)
+xlabel('\DeltaR^{2}')
+ax = gca;
+box off;
+set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','none','FontSize',9, 'XLim',xlim, 'YTick',1:ks, 'YDir','reverse', 'XDir','reverse')
+ax.Position(1) = 0.57;
+ax.Position(3) = 0.4;
+text(xlim(1),ks,'d', 'FontSize',12, 'HorizontalAlignment','right')
+hold off;
 
 % ET
 xlim = [-25 110];
-axes(axf(3))
+axes(axf(5))
 ym = nanmedian(dMAE_ET, 2);
 [~,idx] = sort(ym,'ascend');
 
@@ -158,18 +219,45 @@ for i = 1:ks
 end
 for i = 1:length(ulc)
     lcidx = find(strcmp(lc, ulc{i}));
-    dmae = dMAE_ET(idx, lcidx);
+    %dmae = dMAE_ET(idx, lcidx);
+    dmae = dMAE_ET(:, lcidx);
     scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)'+normrnd(0,stagger,size(dmae)), [],1), 15, clr(i,:), 'filled')
 end
-scatter(ym(idx), 1:ks, 50, 'k', 'Marker','|', 'LineWidth',1.5)
+scatter(ym(:), 1:ks, 50, 'k', 'Marker','|', 'LineWidth',1.5)
 xlabel('\DeltaMAE (%)')
 ax = gca;
 box off;
-set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9,'XLim',xlim)
-ax.Position(1) = 0.28;
-ax.Position(3) = 0.7;
-text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(idx), 'HorizontalAlignment','right','FontSize',8)
-text(xlim(2),1,'c', 'FontSize',12, 'HorizontalAlignment','right')
+set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','w','FontSize',9,'XLim',xlim,'YDir','reverse')
+ax.Position(1) = 0.14;
+ax.Position(3) = 0.4;
+text(repmat(ax.XLim(1),1,ks), 1:ks, varlabels(:), 'HorizontalAlignment','right','FontSize',8)
+text(xlim(2),ks,'e', 'FontSize',12, 'HorizontalAlignment','right')
+
+xlim = [-0.65 0.25];
+axes(axf(6))
+ym = nanmedian(dR2_ET, 2);
+[~,idx] = sort(ym,'ascend');
+
+plot([0 0], [0 ks+0.5], 'k-')
+hold on;
+for i = 1:ks
+    plot(xlim, [i i], '-', 'Color',[0.9 0.9 0.9])
+end
+pHandle = cell([1 length(ulc)]);
+for i = 1:length(ulc)
+    lcidx = find(strcmp(lc, ulc{i}));
+    dmae = dR2_ET(:, lcidx);
+    pHandle{i} = scatter(reshape(dmae,[],1), reshape(repmat(1:ks, length(lcidx), 1)'+normrnd(0,stagger,size(dmae)), [],1), 15, clr(i,:), 'filled');
+end
+scatter(ym, 1:ks, 50, 'k', 'Marker','|', 'LineWidth',1.5)
+xlabel('\DeltaR^{2}')
+ax = gca;
+box off;
+set(ax, 'TickDir','out', 'TickLength',[0.025 0],'YColor','none','FontSize',9, 'XLim',xlim, 'YTick',1:ks, 'YDir','reverse', 'XDir','reverse')
+ax.Position(1) = 0.57;
+ax.Position(3) = 0.4;
+text(xlim(1),ks,'f', 'FontSize',12, 'HorizontalAlignment','right')
+hold off;
 
 set(gcf,'PaperPositionMode','auto','InvertHardCopy','off')
 print('-dtiff','-f1','-r300','./output/DrylANNd_variableimportance_monthly.tif')
