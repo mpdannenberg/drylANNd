@@ -72,7 +72,7 @@ for i = 1:n
     
 end
 
-set(gca,'XLim',ylim, 'YLim',ylim, 'TickDir','out', 'TickLength',[0.02 0.])
+set(gca,'XLim',ylim, 'YLim',ylim, 'TickDir','out', 'TickLength',[0.02 0.], 'XTick',0:250:1000, 'YTick',0:250:1000)
 plot(ylim, ylim, '-', 'Color',[0.2 0.2 0.2])
 text(ylim(2), ylim(2), '1:1', 'FontSize',8, 'HorizontalAlignment','right', 'VerticalAlignment','bottom', 'Rotation',45)
 text(ylim(1)+0.05*diff(ylim), ylim(2), 'a', 'FontSize',12)
@@ -93,6 +93,7 @@ xlabel('observed GPP (g C m^{-2})')
 ylabel('modeled GPP (g C m^{-2})')
 
 lgd = legend([p1 p2], 'DrylANNd', 'MODIS', 'Location', 'northoutside', 'Orientation','horizontal');
+legend('boxoff')
 lgd.Position(2) = 0.95;
 lgd.Position(1) = (1-lgd.Position(3))/2;
 
@@ -118,7 +119,7 @@ for i = 1:n
     
 end
 
-set(gca,'XLim',ylim, 'YLim',ylim, 'TickDir','out', 'TickLength',[0.02 0.])
+set(gca,'XLim',ylim, 'YLim',ylim, 'TickDir','out', 'TickLength',[0.02 0.], 'XTick',-400:200:200, 'YTick',-400:200:200)
 plot(ylim, ylim, '-', 'Color',[0.2 0.2 0.2])
 text(ylim(2), ylim(2), '1:1', 'FontSize',8, 'HorizontalAlignment','right', 'VerticalAlignment','bottom', 'Rotation',45)
 text(ylim(1)+0.05*diff(ylim), ylim(2), 'b', 'FontSize',12)
@@ -152,7 +153,7 @@ ylabel('modeled GPP anomaly (g C m^{-2})')
 ET_obs = NaN(length(syear:eyear), n);
 ET_est = NaN(length(syear:eyear), n);
 ET_modis = NaN(length(syear:eyear), n);
-ylim = [0 600];
+ylim = [0 700];
 subplot(nrows, ncols, 3)
     
 % Annual 
@@ -194,7 +195,7 @@ for i = 1:n
     
 end
 
-set(gca,'XLim',ylim, 'YLim',ylim, 'TickDir','out', 'TickLength',[0.02 0.])
+set(gca,'XLim',ylim, 'YLim',ylim, 'TickDir','out', 'TickLength',[0.02 0.], 'XTick',0:200:600, 'YTick',0:200:600)
 plot(ylim, ylim, '-', 'Color',[0.2 0.2 0.2])
 text(ylim(2), ylim(2), '1:1', 'FontSize',8, 'HorizontalAlignment','right', 'VerticalAlignment','bottom', 'Rotation',45)
 text(ylim(1)+0.05*diff(ylim), ylim(2), 'c', 'FontSize',12)
@@ -236,7 +237,7 @@ for i = 1:n
     
 end
 
-set(gca,'XLim',ylim, 'YLim',ylim, 'TickDir','out', 'TickLength',[0.02 0.])
+set(gca,'XLim',ylim, 'YLim',ylim, 'TickDir','out', 'TickLength',[0.02 0.], 'XTick',-200:100:200, 'YTick',-200:100:200)
 plot(ylim, ylim, '-', 'Color',[0.2 0.2 0.2])
 text(ylim(2), ylim(2), '1:1', 'FontSize',8, 'HorizontalAlignment','right', 'VerticalAlignment','bottom', 'Rotation',45)
 text(ylim(1)+0.05*diff(ylim), ylim(2), 'd', 'FontSize',12)
