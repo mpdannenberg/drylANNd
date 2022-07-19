@@ -3,7 +3,7 @@ alphabet = 'abcdefghijklmnopqrstuvwxyz';
 includeSites = {'Me6','Mpj','Rls','Rms','Rws','SRG','SRM','Seg','Ses','Ton','Var','Vcm','Vcp','Whs','Wjs','Wkg'};
 nrows = 2; % number of rows in figure
 ncols = 2; % number of columns in figure
-windowSize = 6;
+windowSize = 7;
 endMonth = 10;
 syear = 2015;
 eyear = 2020;
@@ -38,9 +38,9 @@ for i = 1:n
     
     yr = Ameriflux_monthly(i).Year;
     mo = Ameriflux_monthly(i).Month(yr >= syear);
-    y = Ameriflux_monthly(i).GPP(yr >= syear);
-    yhat = Ameriflux_monthly(i).GPP_DrylANNd(yr >= syear);
-    modis = Ameriflux_monthly(i).MOD17_GPP(yr >= syear);
+    y = fillmissing(Ameriflux_monthly(i).GPP(yr >= syear), 'spline', 'EndValues','none');
+    yhat = fillmissing(Ameriflux_monthly(i).GPP_DrylANNd(yr >= syear), 'spline', 'EndValues','none');
+    modis = fillmissing(Ameriflux_monthly(i).MOD17_GPP(yr >= syear), 'spline', 'EndValues','none');
 
     mean_y = movmean(y, [windowSize-1 0], 'omitnan');
     mean_y = ndays*mean_y(mo == endMonth);
@@ -53,22 +53,22 @@ for i = 1:n
     GPP_modis(:,i) = mean_modis;
     
     % DrylANNd
-    scatter(mean_y, mean_yhat, 20, clr(4, :), 'filled')
+    p1 = scatter(mean_y, mean_yhat, 20, clr(4, :), 'filled');
     hold on;
     mdl = fitlm(mean_y, mean_yhat);
     a = mdl.Coefficients.Estimate(2);
     b = mdl.Coefficients.Estimate(1);
     plot([min(mean_y) max(mean_y)], [a*min(mean_y)+b a*max(mean_y)+b],...
-        '-', 'LineWidth',0.8, 'Color',clr(4,:))
+        '-', 'LineWidth',0.8, 'Color',clr(4,:));
     
     % MODIS
-    scatter(mean_y, mean_modis, 20, [0.6 0.6 0.6], 'filled')
+    p2 = scatter(mean_y, mean_modis, 20, [0.6 0.6 0.6], 'filled');
     hold on;
     mdl = fitlm(mean_y, mean_modis);
     a = mdl.Coefficients.Estimate(2);
     b = mdl.Coefficients.Estimate(1);
     plot([min(mean_y) max(mean_y)], [a*min(mean_y)+b a*max(mean_y)+b],...
-        '-', 'LineWidth',0.8, 'Color',[0.6 0.6 0.6])
+        '-', 'LineWidth',0.8, 'Color',[0.6 0.6 0.6]);
     
 end
 
@@ -79,24 +79,28 @@ text(ylim(1)+0.05*diff(ylim), ylim(2), 'a', 'FontSize',12)
 
 r = corr(reshape(GPP_obs, [], 1), reshape(GPP_est, [], 1), 'rows','pairwise') ^2;
 mae = mean(abs(reshape(GPP_obs, [], 1) - reshape(GPP_est, [], 1)), 'omitnan');
-text(ylim(1)+0.05*diff(ylim), ylim(2)-0.06*diff(ylim),...
-    ['DrylANNd: R^{2} = ', sprintf('%.2f', r), '; MAE = ', sprintf('%.2f', mae)],...
+text(ylim(1)+0.05*diff(ylim), ylim(2)-0.08*diff(ylim),...
+    ['R^{2} = ', sprintf('%.2f', r), '; MAE = ', sprintf('%.2f', mae)],...
     'FontSize',8, 'Color',clr(4,:))
 
 r = corr(reshape(GPP_obs, [], 1), reshape(GPP_modis, [], 1), 'rows','pairwise') ^2;
 mae = mean(abs(reshape(GPP_obs, [], 1) - reshape(GPP_modis, [], 1)), 'omitnan');
-text(ylim(1)+0.05*diff(ylim), ylim(2)-0.12*diff(ylim),...
-    ['MODIS: R^{2} = ', sprintf('%.2f', r), '; MAE = ', sprintf('%.2f', mae)],...
+text(ylim(1)+0.05*diff(ylim), ylim(2)-0.14*diff(ylim),...
+    ['R^{2} = ', sprintf('%.2f', r), '; MAE = ', sprintf('%.2f', mae)],...
     'FontSize',8, 'Color',[0.6 0.6 0.6])
 
 xlabel('observed GPP (g C m^{-2})')
 ylabel('modeled GPP (g C m^{-2})')
 
+lgd = legend([p1 p2], 'DrylANNd', 'MODIS', 'Location', 'northoutside', 'Orientation','horizontal');
+lgd.Position(2) = 0.95;
+lgd.Position(1) = (1-lgd.Position(3))/2;
+
 % Anomalies
-GPP_obs_anom = GPP_obs - repmat(mean(GPP_obs(years ~= 2020, :)), length(syear:eyear), 1);
-GPP_est_anom = GPP_est - repmat(mean(GPP_est(years ~= 2020, :)), length(syear:eyear), 1);
-GPP_modis_anom = GPP_modis - repmat(mean(GPP_modis(years ~= 2020, :)), length(syear:eyear), 1);
-ylim = [-300 300];
+GPP_obs_anom = GPP_obs - repmat(mean(GPP_obs(:, :)), length(syear:eyear), 1);
+GPP_est_anom = GPP_est - repmat(mean(GPP_est(:, :)), length(syear:eyear), 1);
+GPP_modis_anom = GPP_modis - repmat(mean(GPP_modis(:, :)), length(syear:eyear), 1);
+ylim = [-400 300];
 
 subplot(nrows, ncols, 2)
 for i = 1:n
@@ -120,16 +124,26 @@ text(ylim(2), ylim(2), '1:1', 'FontSize',8, 'HorizontalAlignment','right', 'Vert
 text(ylim(1)+0.05*diff(ylim), ylim(2), 'b', 'FontSize',12)
 
 r = corr(reshape(GPP_obs_anom, [], 1), reshape(GPP_est_anom, [], 1), 'rows','pairwise') ^2;
-mae = mean(abs(reshape(GPP_obs_anom, [], 1) - reshape(GPP_est_anom, [], 1)), 'omitnan');
-text(ylim(1)+0.05*diff(ylim), ylim(2)-0.06*diff(ylim),...
-    ['DrylANNd: R^{2} = ', sprintf('%.2f', r), '; MAE = ', sprintf('%.2f', mae)],...
+mdl = fitlm(reshape(GPP_obs_anom, [], 1), reshape(GPP_est_anom, [], 1));
+a = mdl.Coefficients.Estimate(2);
+b = mdl.Coefficients.Estimate(1);
+text(ylim(1)+0.05*diff(ylim), ylim(2)-0.08*diff(ylim),...
+    ['R^{2} = ', sprintf('%.2f', r), '; slope = ', sprintf('%.2f', a),char(177),sprintf('%.2f', 1.96*mdl.Coefficients.SE(2))],...
     'FontSize',8, 'Color',clr(4,:))
+plot([min(reshape(GPP_obs_anom, [], 1)) max(reshape(GPP_obs_anom, [], 1))], ...
+    [b+a*min(reshape(GPP_obs_anom, [], 1)) b+a*max(reshape(GPP_obs_anom, [], 1))],...
+    '-', 'Color',clr(4,:))
 
 r = corr(reshape(GPP_obs_anom, [], 1), reshape(GPP_modis_anom, [], 1), 'rows','pairwise') ^2;
-mae = mean(abs(reshape(GPP_obs_anom, [], 1) - reshape(GPP_modis_anom, [], 1)), 'omitnan');
-text(ylim(1)+0.05*diff(ylim), ylim(2)-0.12*diff(ylim),...
-    ['MODIS: R^{2} = ', sprintf('%.2f', r), '; MAE = ', sprintf('%.2f', mae)],...
+mdl = fitlm(reshape(GPP_obs_anom, [], 1), reshape(GPP_modis_anom, [], 1));
+a = mdl.Coefficients.Estimate(2);
+b = mdl.Coefficients.Estimate(1);
+text(ylim(1)+0.05*diff(ylim), ylim(2)-0.14*diff(ylim),...
+    ['R^{2} = ', sprintf('%.2f', r), '; slope = ', sprintf('%.2f', a),char(177),sprintf('%.2f', 1.96*mdl.Coefficients.SE(2))],...
     'FontSize',8, 'Color',[0.6 0.6 0.6])
+plot([min(reshape(GPP_obs_anom, [], 1)) max(reshape(GPP_obs_anom, [], 1))], ...
+    [b+a*min(reshape(GPP_obs_anom, [], 1)) b+a*max(reshape(GPP_obs_anom, [], 1))],...
+    '-', 'Color',[0.6 0.6 0.6])
 
 xlabel('observed GPP anomaly (g C m^{-2})')
 ylabel('modeled GPP anomaly (g C m^{-2})')
@@ -146,9 +160,9 @@ for i = 1:n
     
     yr = Ameriflux_monthly(i).Year;
     mo = Ameriflux_monthly(i).Month(yr >= syear);
-    y = Ameriflux_monthly(i).ET(yr >= syear);
-    yhat = Ameriflux_monthly(i).ET_DrylANNd(yr >= syear);
-    modis = Ameriflux_monthly(i).MOD16_ET(yr >= syear);
+    y = fillmissing(Ameriflux_monthly(i).ET(yr >= syear), 'spline', 'EndValues','none');
+    yhat = fillmissing(Ameriflux_monthly(i).ET_DrylANNd(yr >= syear), 'spline', 'EndValues','none');
+    modis = fillmissing(Ameriflux_monthly(i).MOD16_ET(yr >= syear), 'spline', 'EndValues','none');
 
     mean_y = movmean(y, [windowSize-1 0], 'omitnan');
     mean_y = ndays*mean_y(mo == endMonth);
@@ -187,23 +201,23 @@ text(ylim(1)+0.05*diff(ylim), ylim(2), 'c', 'FontSize',12)
 
 r = corr(reshape(ET_obs, [], 1), reshape(ET_est, [], 1), 'rows','pairwise') ^2;
 mae = mean(abs(reshape(ET_obs, [], 1) - reshape(ET_est, [], 1)), 'omitnan');
-text(ylim(1)+0.05*diff(ylim), ylim(2)-0.06*diff(ylim),...
-    ['DrylANNd: R^{2} = ', sprintf('%.2f', r), '; MAE = ', sprintf('%.2f', mae)],...
+text(ylim(1)+0.05*diff(ylim), ylim(2)-0.08*diff(ylim),...
+    ['R^{2} = ', sprintf('%.2f', r), '; MAE = ', sprintf('%.2f', mae)],...
     'FontSize',8, 'Color',clr(4,:))
 
 r = corr(reshape(ET_obs, [], 1), reshape(ET_modis, [], 1), 'rows','pairwise') ^2;
 mae = mean(abs(reshape(ET_obs, [], 1) - reshape(ET_modis, [], 1)), 'omitnan');
-text(ylim(1)+0.05*diff(ylim), ylim(2)-0.12*diff(ylim),...
-    ['MODIS: R^{2} = ', sprintf('%.2f', r), '; MAE = ', sprintf('%.2f', mae)],...
+text(ylim(1)+0.05*diff(ylim), ylim(2)-0.14*diff(ylim),...
+    ['R^{2} = ', sprintf('%.2f', r), '; MAE = ', sprintf('%.2f', mae)],...
     'FontSize',8, 'Color',[0.6 0.6 0.6])
 
 xlabel('observed ET (mm)')
 ylabel('modeled ET (mm)')
 
 % Anomalies
-ET_obs_anom = ET_obs - repmat(mean(ET_obs(years ~= 2020, :)), length(syear:eyear), 1);
-ET_est_anom = ET_est - repmat(mean(ET_est(years ~= 2020, :)), length(syear:eyear), 1);
-ET_modis_anom = ET_modis - repmat(mean(ET_modis(years ~= 2020, :)), length(syear:eyear), 1);
+ET_obs_anom = ET_obs - repmat(mean(ET_obs(:, :)), length(syear:eyear), 1);
+ET_est_anom = ET_est - repmat(mean(ET_est(:, :)), length(syear:eyear), 1);
+ET_modis_anom = ET_modis - repmat(mean(ET_modis(:, :)), length(syear:eyear), 1);
 ylim = [-200 200];
 
 subplot(nrows, ncols, 4)
@@ -228,16 +242,26 @@ text(ylim(2), ylim(2), '1:1', 'FontSize',8, 'HorizontalAlignment','right', 'Vert
 text(ylim(1)+0.05*diff(ylim), ylim(2), 'd', 'FontSize',12)
 
 r = corr(reshape(ET_obs_anom, [], 1), reshape(ET_est_anom, [], 1), 'rows','pairwise') ^2;
-mae = mean(abs(reshape(ET_obs_anom, [], 1) - reshape(ET_est_anom, [], 1)), 'omitnan');
-text(ylim(1)+0.05*diff(ylim), ylim(2)-0.06*diff(ylim),...
-    ['DrylANNd: R^{2} = ', sprintf('%.2f', r), '; MAE = ', sprintf('%.2f', mae)],...
+mdl = fitlm(reshape(ET_obs_anom, [], 1), reshape(ET_est_anom, [], 1));
+a = mdl.Coefficients.Estimate(2);
+b = mdl.Coefficients.Estimate(1);
+text(ylim(1)+0.05*diff(ylim), ylim(2)-0.08*diff(ylim),...
+    ['R^{2} = ', sprintf('%.2f', r), '; slope = ', sprintf('%.2f', a),char(177),sprintf('%.2f', 1.96*mdl.Coefficients.SE(2))],...
     'FontSize',8, 'Color',clr(4,:))
+plot([min(reshape(ET_obs_anom, [], 1)) max(reshape(ET_obs_anom, [], 1))], ...
+    [b+a*min(reshape(ET_obs_anom, [], 1)) b+a*max(reshape(ET_obs_anom, [], 1))],...
+    '-', 'Color',clr(4,:))
 
 r = corr(reshape(ET_obs_anom, [], 1), reshape(ET_modis_anom, [], 1), 'rows','pairwise') ^2;
-mae = mean(abs(reshape(ET_obs_anom, [], 1) - reshape(ET_modis_anom, [], 1)), 'omitnan');
-text(ylim(1)+0.05*diff(ylim), ylim(2)-0.12*diff(ylim),...
-    ['MODIS: R^{2} = ', sprintf('%.2f', r), '; MAE = ', sprintf('%.2f', mae)],...
+mdl = fitlm(reshape(ET_obs_anom, [], 1), reshape(ET_modis_anom, [], 1));
+a = mdl.Coefficients.Estimate(2);
+b = mdl.Coefficients.Estimate(1);
+text(ylim(1)+0.05*diff(ylim), ylim(2)-0.14*diff(ylim),...
+    ['R^{2} = ', sprintf('%.2f', r), '; slope = ', sprintf('%.2f', a),char(177),sprintf('%.2f', 1.96*mdl.Coefficients.SE(2))],...
     'FontSize',8, 'Color',[0.6 0.6 0.6])
+plot([min(reshape(ET_obs_anom, [], 1)) max(reshape(ET_obs_anom, [], 1))], ...
+    [b+a*min(reshape(ET_obs_anom, [], 1)) b+a*max(reshape(ET_obs_anom, [], 1))],...
+    '-', 'Color',[0.6 0.6 0.6])
 
 xlabel('observed ET anomaly (mm)')
 ylabel('modeled ET anomaly (mm)')
