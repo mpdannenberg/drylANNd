@@ -35,5 +35,5 @@ aridity(ai >= 0.5 & ai<=0.75) = 4;
 
 % Subset to region of interest and save
 ai = ai(latidx, lonidx);
-save('./data/TerraClimate_AridityIndex.mat', 'ai','lat','lon');
+save('./data/TerraClimate_AridityIndex.mat', 'ai','lat','lon','ppt05','pet05');
 
