@@ -70,8 +70,9 @@ gsc = [204,204,204
 
 h = figure('Color','w');
 h.Units = 'inches';
-h.Position = [1 1 4 4];
+h.Position = [1 1 6.5 3.];
 
+subplot(1,5,1:3)
 axesm('winkel','MapLatLimit',latlim,'MapLonLimit',lonlim,'grid',...
         'on','PLineLocation',4,'MLineLocation',8,'MeridianLabel','on',...
         'ParallelLabel','on','GLineWidth',0.5,'Frame','off','FFaceColor',...
@@ -86,16 +87,44 @@ geoshow(states,'FaceColor','none','EdgeColor',[0.3 0.3 0.3])
 scatterm(flat,flon,25,clr(ic,:), 'filled',...
     'MarkerEdgeColor','w');
 ax=gca;
+ax.Position(1) = 0.08;
 ax.Position(2) = 0.18;
 
 cb = colorbar('southoutside');
-cb.Position = [0.1 0.15 0.8 0.04];
+cb.Position = [0.02 0.08 0.52 0.05];
 cb.Ticks = 1:4;
 cb.TickLength = 0;
 cb.TickLabels = {'hyperarid','arid','semiarid','subhumid'};
 
+text(-0.25,0.85,'a', 'FontSize',12, 'FontWeight','bold')
+
+%% Scatterplot of P vs. PET
+subplot(1,5,4:5)
+scatter(ppt05(aridity==4), pet05(aridity==4), 5, gsc(1,:), "filled")
+hold on;
+scatter(ppt05(aridity==3), pet05(aridity==3), 5, gsc(2,:), "filled")
+scatter(ppt05(aridity==2), pet05(aridity==2), 5, gsc(3,:), "filled")
+scatter(ppt05(aridity==1), pet05(aridity==1), 5, gsc(4,:), "filled")
+set(gca, 'TickDir','out', 'TickLength',[0.02 0])
+for i = 1:n
+    latidx = find(abs(Ameriflux(i).Lat - lat) == min(abs(Ameriflux(i).Lat - lat)));
+    lonidx = find(abs(Ameriflux(i).Lon - lon) == min(abs(Ameriflux(i).Lon - lon)));
+    scatter(ppt05(latidx, lonidx),pet05(latidx, lonidx),25,clr(ic(i),:), 'filled',...
+        'MarkerEdgeColor','w');
+end
+hold off;
+ax = gca;
+ax.Position(1) = 0.65;
+ax.Position(2) = 0.18;
+ax.Position(3) = 0.32;
+ax.Position(4) = 0.8;
+xlabel('Mean annual precipitation (mm)')
+ylabel('Mean annual PET (mm)')
+
+text(-300,2480,'b', 'FontSize',12, 'FontWeight','bold')
+
 %% Pie chart of LC types
-h1 = axes('Parent', gcf, 'Position', [0.74 0.77 0.2 0.2]);
+h1 = axes('Parent', gcf, 'Position', [0.82 0.78 0.2 0.2]);
 set(h1, 'Color','w')
 p = pie(lc_counts, ones(size(lc_counts)), C);
 colormap(gca, clr)
