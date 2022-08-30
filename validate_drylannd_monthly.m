@@ -53,8 +53,8 @@ for j = 1:n
         net = feedforwardnet(nnsize);
         net.trainParam.showWindow = false;
         net.divideParam.trainRatio = 0.75;
-        net.divideParam.testRatio = 0.2;
-        net.divideParam.valRatio = 0.05;
+        net.divideParam.testRatio = 0.;
+        net.divideParam.valRatio = 0.25;
         [net, tr] = train(net, Xc, Yc);
 
         Yv(:,:,i) = net(Xv) .* Yvs + Yvm;
