@@ -69,7 +69,7 @@ for t = 1:nt
 
     end
 
-    Y_ens = median(Y, 3);
+    Y_ens = mean(Y, 3);
     Y_ens_low = quantile(Y, credInt(1), 3);
     Y_ens_high = quantile(Y, credInt(2), 3);
     
