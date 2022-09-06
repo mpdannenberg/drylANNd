@@ -462,9 +462,9 @@ clr = wesanderson('aquatic4'); clr(3,:) = [];
 
 h = figure('Color','w');
 h.Units = 'inches';
-h.Position = [1 1 6.5 5.5];
+h.Position = [1 1 6.5 6];
 
-ax = tight_subplot(2,3,[0.08 0.02],[0.12 0.08],[0.08 0.04]);
+ax = tight_subplot(2,3,[0.15 0.02],[0.12 0.08],[0.08 0.04]);
 yticks = 0:0.1:0.9;
 ydif = max(yticks)-min(yticks);
 xlim = [0.25 7.75];
@@ -478,7 +478,7 @@ end
 b=bar(GPP_drylannd);
 b.EdgeColor = 'none';
 b.FaceColor = [0.5 0.5 0.5];
-set(gca, 'XTickLabel','', 'TickDir','out', 'TickLength',[0.02 0], 'YLim',[min(yticks) max(yticks)], 'FontSize',8, 'XLim',xlim, 'YColor','w', 'XTick',1:7)
+set(gca, 'XTickLabel',labs, 'TickDir','out', 'TickLength',[0.02 0], 'YLim',[min(yticks) max(yticks)], 'FontSize',8, 'XLim',xlim, 'YColor','w', 'XTick',1:7)
 box off;
 text(0.5, max(yticks)+ydif*0.05, '{\bfa.} monthly GPP', 'FontSize',10, 'VerticalAlignment','bottom')
 text(-1, (max(yticks)-min(yticks))/2, 'R^{2}', 'Rotation',0, 'HorizontalAlignment','right','FontSize',10,'VerticalAlignment','middle')
@@ -486,6 +486,10 @@ p1 = scatter(1:7, GPP_drylannd_ENF, 30, clr(1,:), 'filled');
 p2 = scatter(1:7, GPP_drylannd_GRA, 30, clr(2,:), 'filled');
 p3 = scatter(1:7, GPP_drylannd_SAV, 30, clr(3,:), 'filled');
 p4 = scatter(1:7, GPP_drylannd_SHB, 30, clr(4,:), 'filled');
+plot(1:7, GPP_drylannd_ENF, '-', 'Color',clr(1,:))
+plot(1:7, GPP_drylannd_GRA, '-', 'Color',clr(2,:))
+plot(1:7, GPP_drylannd_SAV, '-', 'Color',clr(3,:))
+plot(1:7, GPP_drylannd_SHB, '-', 'Color',clr(4,:))
 lgd = legend([b p1 p2 p3 p4], 'Overall', 'ENF', 'GRS', 'SAV', 'SHB', 'Orientation','horizontal', 'Location','northoutside');
 lgd.Position(1) = (1 - lgd.Position(3))/2;
 lgd.Position(2) = 0.97;
@@ -499,13 +503,17 @@ end
 b=bar(NEE_drylannd);
 b.EdgeColor = 'none';
 b.FaceColor = [0.5 0.5 0.5];
-set(gca, 'XTickLabel','', 'TickDir','out', 'TickLength',[0.02 0], 'YLim',[min(yticks) max(yticks)], 'FontSize',8, 'XLim',xlim, 'YColor','w', 'XTick',1:7)
+set(gca, 'XTickLabel',labs, 'TickDir','out', 'TickLength',[0.02 0], 'YLim',[min(yticks) max(yticks)], 'FontSize',8, 'XLim',xlim, 'YColor','w', 'XTick',1:7)
 box off;
 text(0.5, max(yticks)+ydif*0.05, '{\bfb.} monthly NEE', 'FontSize',10, 'VerticalAlignment','bottom')
 scatter(1:7, NEE_drylannd_ENF, 30, clr(1,:), 'filled')
 scatter(1:7, NEE_drylannd_GRA, 30, clr(2,:), 'filled')
 scatter(1:7, NEE_drylannd_SAV, 30, clr(3,:), 'filled')
 scatter(1:7, NEE_drylannd_SHB, 30, clr(4,:), 'filled')
+plot(1:7, NEE_drylannd_ENF, '-', 'Color',clr(1,:))
+plot(1:7, NEE_drylannd_GRA, '-', 'Color',clr(2,:))
+plot(1:7, NEE_drylannd_SAV, '-', 'Color',clr(3,:))
+plot(1:7, NEE_drylannd_SHB, '-', 'Color',clr(4,:))
 
 axes(ax(3))
 for i = 1:length(yticks)
@@ -515,13 +523,17 @@ end
 b=bar(ET_drylannd);
 b.EdgeColor = 'none';
 b.FaceColor = [0.5 0.5 0.5];
-set(gca, 'XTickLabel','', 'TickDir','out', 'TickLength',[0.02 0], 'YLim',[min(yticks) max(yticks)], 'FontSize',8, 'XLim',xlim, 'YColor','w', 'XTick',1:7)
+set(gca, 'XTickLabel',labs, 'TickDir','out', 'TickLength',[0.02 0], 'YLim',[min(yticks) max(yticks)], 'FontSize',8, 'XLim',xlim, 'YColor','w', 'XTick',1:7)
 box off;
 text(0.5, max(yticks)+ydif*0.05, '{\bfc.} monthly ET', 'FontSize',10, 'VerticalAlignment','bottom')
 scatter(1:7, ET_drylannd_ENF, 30, clr(1,:), 'filled')
 scatter(1:7, ET_drylannd_GRA, 30, clr(2,:), 'filled')
 scatter(1:7, ET_drylannd_SAV, 30, clr(3,:), 'filled')
 scatter(1:7, ET_drylannd_SHB, 30, clr(4,:), 'filled')
+plot(1:7, ET_drylannd_ENF, '-', 'Color',clr(1,:))
+plot(1:7, ET_drylannd_GRA, '-', 'Color',clr(2,:))
+plot(1:7, ET_drylannd_SAV, '-', 'Color',clr(3,:))
+plot(1:7, ET_drylannd_SHB, '-', 'Color',clr(4,:))
 
 %% Monthly anomalies
 load ./output/validation/monthly/DrylANNd_Ameriflux_validation_variable_importance.mat;
@@ -1081,6 +1093,10 @@ scatter(1:7, GPP_drylannd_ENF, 30, clr(1,:), 'filled')
 scatter(1:7, GPP_drylannd_GRA, 30, clr(2,:), 'filled')
 scatter(1:7, GPP_drylannd_SAV, 30, clr(3,:), 'filled')
 scatter(1:7, GPP_drylannd_SHB, 30, clr(4,:), 'filled')
+plot(1:7, GPP_drylannd_ENF, '-', 'Color',clr(1,:))
+plot(1:7, GPP_drylannd_GRA, '-', 'Color',clr(2,:))
+plot(1:7, GPP_drylannd_SAV, '-', 'Color',clr(3,:))
+plot(1:7, GPP_drylannd_SHB, '-', 'Color',clr(4,:))
 
 axes(ax(5))
 for i = 1:length(yticks)
@@ -1097,6 +1113,10 @@ scatter(1:7, NEE_drylannd_ENF, 30, clr(1,:), 'filled')
 scatter(1:7, NEE_drylannd_GRA, 30, clr(2,:), 'filled')
 scatter(1:7, NEE_drylannd_SAV, 30, clr(3,:), 'filled')
 scatter(1:7, NEE_drylannd_SHB, 30, clr(4,:), 'filled')
+plot(1:7, NEE_drylannd_ENF, '-', 'Color',clr(1,:))
+plot(1:7, NEE_drylannd_GRA, '-', 'Color',clr(2,:))
+plot(1:7, NEE_drylannd_SAV, '-', 'Color',clr(3,:))
+plot(1:7, NEE_drylannd_SHB, '-', 'Color',clr(4,:))
 
 axes(ax(6))
 for i = 1:length(yticks)
@@ -1113,6 +1133,10 @@ scatter(1:7, ET_drylannd_ENF, 30, clr(1,:), 'filled')
 scatter(1:7, ET_drylannd_GRA, 30, clr(2,:), 'filled')
 scatter(1:7, ET_drylannd_SAV, 30, clr(3,:), 'filled')
 scatter(1:7, ET_drylannd_SHB, 30, clr(4,:), 'filled')
+plot(1:7, ET_drylannd_ENF, '-', 'Color',clr(1,:))
+plot(1:7, ET_drylannd_GRA, '-', 'Color',clr(2,:))
+plot(1:7, ET_drylannd_SAV, '-', 'Color',clr(3,:))
+plot(1:7, ET_drylannd_SHB, '-', 'Color',clr(4,:))
 
 set(gcf,'PaperPositionMode','auto','InvertHardCopy','off')
 print('-dtiff','-f1','-r300','./output/validation/variables-r2.tif')
