@@ -258,7 +258,7 @@ set(ax, 'YLim',xylims, 'XLim',xylims, 'TickDir','out', 'TickLength',[0.02 0])
 r = corr(mean(siteGPP(:,idx), 'omitnan')', mean(predGPP(:,idx), 'omitnan')', 'rows','pairwise') ^ 2;
 text(xylims(1)+0.05*diff(xylims), xylims(2), ['R^{2} = ', sprintf('%.2f', r)], 'FontSize', 8);
 box off;
-xlabel('Site mean GPP (g C m^{-2})', 'FontSize',8)
+xlabel('Eddy covariance mean GPP (g C m^{-2})', 'FontSize',8)
 ylabel('DrylANNd mean GPP (g C m^{-2})', 'FontSize',8)
 ax.Position(1) = 0.6;
 ax.Position(2) = 0.745;
@@ -355,7 +355,7 @@ set(ax, 'YLim',xylims, 'XLim',xylims, 'TickDir','out', 'TickLength',[0.02 0])
 r = corr(mean(siteNEE(:,idx), 'omitnan')', mean(predNEE(:,idx), 'omitnan')', 'rows','pairwise') ^ 2;
 text(xylims(1)+0.05*diff(xylims), xylims(2), ['R^{2} = ', sprintf('%.2f', r)], 'FontSize', 8);
 box off;
-xlabel('Site mean NEE (g C m^{-2})', 'FontSize',8)
+xlabel('Eddy covariance mean NEE (g C m^{-2})', 'FontSize',8)
 ylabel('DrylANNd mean NEE (g C m^{-2})', 'FontSize',8)
 ax.Position(1) = 0.6;
 ax.Position(2) = 0.418;
@@ -447,7 +447,7 @@ set(ax, 'YLim',xylims, 'XLim',xylims, 'TickDir','out', 'TickLength',[0.02 0])
 r = corr(mean(siteET(:,idx), 'omitnan')', mean(predET(:,idx), 'omitnan')', 'rows','pairwise') ^ 2;
 text(xylims(1)+0.05*diff(xylims), xylims(2), ['R^{2} = ', sprintf('%.2f', r)], 'FontSize', 8);
 box off;
-xlabel('Site mean ET (mm)', 'FontSize',8)
+xlabel('Eddy covariance mean ET (mm)', 'FontSize',8)
 ylabel('DrylANNd mean ET (mm)', 'FontSize',8)
 ax.Position(1) = 0.6;
 ax.Position(2) = 0.086;
