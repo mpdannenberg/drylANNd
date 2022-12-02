@@ -58,7 +58,7 @@ for i = 1:n
     hold on;
     
     r = corr(y(ib), Ameriflux_monthly(i).MOD17_GPP(ib), 'rows','pairwise')^2;
-    plot(i, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2)
+    plot(i, r, '+', 'Color', [0.2 0.2 0.2], 'LineWidth',1.2)
 end
 
 % ENF overall
@@ -70,7 +70,7 @@ ib = ~isnan(yhat1);
 r = corr(y(ib)', yhat1(ib)', 'rows','pairwise')^2;
 b1 = bar(n+2, r, 'FaceColor',clr(1, :), 'FaceAlpha',0.7, 'EdgeColor',clr(1, :), 'LineWidth',2);
 r = corr(y(ib)', yhat2(ib)', 'rows','pairwise')^2;
-p1 = plot(n+2, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2);
+p1 = plot(n+2, r, '+', 'Color', [0.2 0.2 0.2], 'LineWidth',1.2);
 
 % GRS overall
 C = Ameriflux_monthly(strcmp(lc, ulc(2)));
@@ -81,7 +81,7 @@ ib = ~isnan(yhat1);
 r = corr(y(ib)', yhat1(ib)', 'rows','pairwise')^2;
 b2 = bar(n+3, r, 'FaceColor',clr(2, :), 'FaceAlpha',0.7, 'EdgeColor',clr(2, :), 'LineWidth',2);
 r = corr(y(ib)', yhat2(ib)', 'rows','pairwise')^2;
-plot(n+3, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2)
+plot(n+3, r, '+', 'Color', [0.2 0.2 0.2], 'LineWidth',1.2)
 
 % SAV overall
 C = Ameriflux_monthly(strcmp(lc, ulc(3)));
@@ -92,7 +92,7 @@ ib = ~isnan(yhat1);
 r = corr(y(ib)', yhat1(ib)', 'rows','pairwise')^2;
 b3 = bar(n+4, r, 'FaceColor',clr(3, :), 'FaceAlpha',0.7, 'EdgeColor',clr(3, :), 'LineWidth',2);
 r = corr(y(ib)', yhat2(ib)', 'rows','pairwise')^2;
-plot(n+4, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2)
+plot(n+4, r, '+', 'Color', [0.2 0.2 0.2], 'LineWidth',1.2)
 
 % SHB overall
 C = Ameriflux_monthly(strcmp(lc, ulc(4)));
@@ -103,7 +103,7 @@ ib = ~isnan(yhat1);
 r = corr(y(ib)', yhat1(ib)', 'rows','pairwise')^2;
 b4 = bar(n+5, r, 'FaceColor',clr(4, :), 'FaceAlpha',0.7, 'EdgeColor',clr(4, :), 'LineWidth',2);
 r = corr(y(ib)', yhat2(ib)', 'rows','pairwise')^2;
-plot(n+5, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2)
+plot(n+5, r, '+', 'Color', [0.2 0.2 0.2], 'LineWidth',1.2)
 
 box off;
 set(gca, 'YLim', [0 1], 'YAxisLocation','right', 'XTick',[1:n (n+2):(n+5)],...
@@ -232,7 +232,7 @@ for i = 1:n
     hold on;
     
     r = corr(y(ib), Ameriflux_monthly(i).MOD16_ET(ib), 'rows','pairwise')^2;
-    plot(i, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2)
+    plot(i, r, '+', 'Color', [0.2 0.2 0.2], 'LineWidth',1.2)
 end
 
 % ENF overall
@@ -244,7 +244,7 @@ ib = ~isnan(yhat1);
 r = corr(y(ib)', yhat1(ib)', 'rows','pairwise')^2;
 bar(n+2, r, 'FaceColor',clr(1, :), 'FaceAlpha',0.7, 'EdgeColor',clr(1, :), 'LineWidth',2)
 r = corr(y(ib)', yhat2(ib)', 'rows','pairwise')^2;
-plot(n+2, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2)
+plot(n+2, r, '+', 'Color', [0.2 0.2 0.2], 'LineWidth',1.2)
 
 % GRS overall
 C = Ameriflux_monthly(strcmp(lc, ulc(2)));
@@ -255,7 +255,7 @@ ib = ~isnan(yhat1);
 r = corr(y(ib)', yhat1(ib)', 'rows','pairwise')^2;
 bar(n+3, r, 'FaceColor',clr(2, :), 'FaceAlpha',0.7, 'EdgeColor',clr(2, :), 'LineWidth',2)
 r = corr(y(ib)', yhat2(ib)', 'rows','pairwise')^2;
-plot(n+3, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2)
+plot(n+3, r, '+', 'Color', [0.2 0.2 0.2], 'LineWidth',1.2)
 
 % SAV overall
 C = Ameriflux_monthly(strcmp(lc, ulc(3)));
@@ -266,7 +266,7 @@ ib = ~isnan(yhat1);
 r = corr(y(ib)', yhat1(ib)', 'rows','pairwise')^2;
 bar(n+4, r, 'FaceColor',clr(3, :), 'FaceAlpha',0.7, 'EdgeColor',clr(3, :), 'LineWidth',2)
 r = corr(y(ib)', yhat2(ib)', 'rows','pairwise')^2;
-plot(n+4, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2)
+plot(n+4, r, '+', 'Color', [0.2 0.2 0.2], 'LineWidth',1.2)
 
 % SHB overall
 C = Ameriflux_monthly(strcmp(lc, ulc(4)));
@@ -277,7 +277,7 @@ ib = ~isnan(yhat1);
 r = corr(y(ib)', yhat1(ib)', 'rows','pairwise')^2;
 bar(n+5, r, 'FaceColor',clr(4, :), 'FaceAlpha',0.7, 'EdgeColor',clr(4, :), 'LineWidth',2)
 r = corr(y(ib)', yhat2(ib)', 'rows','pairwise')^2;
-plot(n+5, r, '+', 'Color', [0.6 0.6 0.6], 'LineWidth',1.2)
+plot(n+5, r, '+', 'Color', [0.2 0.2 0.2], 'LineWidth',1.2)
 
 box off;
 set(gca, 'YLim', [0 1], 'YAxisLocation','right', 'XTick',[1:n (n+2):(n+5)],...
