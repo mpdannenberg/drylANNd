@@ -11,6 +11,7 @@ lc = {Ameriflux_monthly.IGBP};
 lc = strrep(lc, 'CSH', 'SHB');
 lc = strrep(lc, 'OSH', 'SHB');
 lc = strrep(lc, 'WSA', 'SAV');
+lc = strrep(lc, 'GRA', 'GRS');
 ulc = unique(lc);
 clr = wesanderson('aquatic4'); clr(3,:) = [];
 
@@ -69,6 +70,7 @@ for i = 1:n
     box off;
 
     text(1, ylim(2), ['US-',includeSites{i}], 'FontSize', 10)
+    text(11, ylim(2), lc{i}, 'FontSize', 8, 'HorizontalAlignment','right')
 
     r = corr(mean_y, mean_yhat, 'rows','pairwise')^2;
     sdr = std(mean_yhat,'omitnan') / std(mean_y,'omitnan');
@@ -144,6 +146,7 @@ for i = 1:n
     box off;
 
     text(1, ylim(2), ['US-',includeSites{i}], 'FontSize', 10)
+    text(11, ylim(2), lc{i}, 'FontSize', 8, 'HorizontalAlignment','right')
 
     r = corr(mean_y, mean_yhat, 'rows','pairwise')^2;
     sdr = std(mean_yhat,'omitnan') / std(mean_y,'omitnan');
@@ -220,7 +223,8 @@ for i = 1:n
     box off;
 
     text(1, ylim(2), ['US-',includeSites{i}], 'FontSize', 10)
-
+    text(11, ylim(2), lc{i}, 'FontSize', 8, 'HorizontalAlignment','right')
+    
     r = corr(mean_y, mean_yhat, 'rows','pairwise')^2;
     sdr = std(mean_yhat,'omitnan') / std(mean_y,'omitnan');
     text(1, ylim(2)-0.12*diff(ylim),...
